@@ -14,6 +14,9 @@ import { PropsWithChildren } from 'react';
 import { convertDuration } from '../utils/duration';
 import { clip } from '../utils/clipString';
 
+import { MediaQuery } from '../__generated__/graphql';
+import { gql, useQuery } from '@apollo/client';
+
 export interface MediumCardProp {
   id: string;
   title: string;
@@ -59,10 +62,59 @@ const StatText: React.FC<PropsWithChildren> = (props) => (
   </Typography>
 );
 
+const GET_MEDIA = gql(`
+  query Media($first: Int!) {
+  mediaConnections(first: $first) {
+    edges {
+      node {
+        id
+        title
+        thumbnail
+        publication
+        duration
+        channel
+      }
+    }
+  }
+}
+`);
+
+const toModel = (data: MediaQuery | undefined): MediumCardProp | undefined => {
+  if (data?.mediaConnections?.edges && data.mediaConnections.edges[0].node) {
+    const fe = data.mediaConnections.edges[0].node;
+    return {
+      id: fe.id,
+      title: fe.title ?? '',
+      channel: fe.channel ?? '',
+      date: fe.publication ?? '',
+      duration: fe.duration ?? NaN,
+      thumbnail: new URL(fe.thumbnail ?? ''),
+      type: 'Video',
+    };
+  }
+  return undefined;
+};
+
 export const MediumCard = (props: MediumCardProp) => {
+  const { loading, error, data } = useQuery(GET_MEDIA, {
+    variables: {
+      first: 10,
+    },
+  });
+
+  if (loading) return <p>Loading...</p>;
+
+  if (error) return <p>Error : {error.message}</p>;
+
+  const modelData = toModel(data);
+
+  if (modelData === undefined) {
+    return <p>Error</p>;
+  }
+
   return (
     <Box>
-      <MediumBadge type={props.type} />
+      <MediumBadge type={modelData.type} />
       <Card
         sx={{ maxWidth: 320, padding: '0px', borderRadius: '8px' }}
         variant="elevation"
@@ -70,14 +122,14 @@ export const MediumCard = (props: MediumCardProp) => {
         <CardMedia
           component="img"
           height={180}
-          image={props.thumbnail.toString()}
+          image={modelData.thumbnail.toString()}
           loading="lazy"
           sx={{ borderRadius: '0px 0px 8px 8px', cursor: 'pointer' }}
         />
         <CardContent style={{ paddingBottom: '16px' }}>
           <Grid container direction="column">
-            <Title title={props.title} />
-            <Channel title={props.channel}></Channel>
+            <Title title={modelData.title} />
+            <Channel title={modelData.channel}></Channel>
             <Grid
               container
               direction="row"
@@ -85,11 +137,11 @@ export const MediumCard = (props: MediumCardProp) => {
             >
               <StatGrid>
                 <TimerOutlinedIcon />
-                <StatText>{convertDuration(props.duration)}</StatText>
+                <StatText>{convertDuration(modelData.duration)}</StatText>
               </StatGrid>
               <StatGrid>
                 <CalendarMonthOutlinedIcon />
-                <StatText>{props.date}</StatText>
+                <StatText>{modelData.date}</StatText>
               </StatGrid>
             </Grid>
           </Grid>
