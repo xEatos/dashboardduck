@@ -1,4 +1,5 @@
 import { MediumCard, MediumCardProp } from './components/MediumCard';
+/*
 import {
   ApolloClient,
   InMemoryCache,
@@ -46,7 +47,7 @@ const toModel = (data: MediaQuery | undefined): MediumCardProp | undefined => {
   }
   return undefined;
 };
-
+*/
 const App = () => {
   const mockMediumProp: MediumCardProp = {
     id: 'https://bnwiki.wikibase.cloud/entity/Q6',
@@ -59,7 +60,7 @@ const App = () => {
     duration: 13 * 60 + 7,
     type: 'Video',
   };
-
+  /*
   const { loading, error, data } = useQuery(GET_MEDIA, {
     variables: {
       first: 10,
@@ -73,8 +74,14 @@ const App = () => {
   const modelData = toModel(data);
   return (
     <ApolloProvider client={client}>
-      <div>{modelData && <MediumCard {...modelData} />}</div>
+    <div>{modelData && <MediumCard {...mockMediumProp} />}</div>
     </ApolloProvider>
+  );
+  */
+  return (
+    <div>
+      <MediumCard {...mockMediumProp} />
+    </div>
   );
 };
 
