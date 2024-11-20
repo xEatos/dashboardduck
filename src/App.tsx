@@ -1,6 +1,11 @@
+import './App.css';
+import { BNAppBar } from './appbar/AppBar';
 import { MediumCard, MediumCardProp } from './components/MediumCard';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { SearchPage } from './searchpage/Page';
+import { Box } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -8,21 +13,21 @@ const client = new ApolloClient({
 });
 
 const App = () => {
-  const mockMediumProp: MediumCardProp = {
-    id: 'https://bnwiki.wikibase.cloud/entity/Q6',
-    title: `32% aller Erwachsenen haben diese Krankheit. Du auch?`,
-    thumbnail: new URL(
-      'https://i.ytimg.com/vi_webp/neZg7jGjfJg/mqdefault.webp',
-    ),
-    channel: 'DoktorWhatson',
-    date: '2023-11-19',
-    duration: 13 * 60 + 7,
-    type: 'Video',
-  };
-
   return (
     <ApolloProvider client={client}>
-      <MediumCard {...mockMediumProp} />
+      <div className="content">
+        <BNAppBar />
+        <SearchPage filterPanel={<Box>Content</Box>} />
+        <Box
+          sx={{
+            border: '2px solid black',
+            height: '64px',
+            boxSizing: 'border-box',
+          }}
+        >
+          Footer
+        </Box>
+      </div>
     </ApolloProvider>
   );
 };

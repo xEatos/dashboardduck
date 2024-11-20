@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.content {
+  display: flex;
+  /*min-height: 100vh;*/
+  flex-direction: column;
+  justify-content: center;
+}
+
