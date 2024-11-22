@@ -55,4 +55,9 @@ export class FixedMap<Key,Value>{
     return new FixedMap(nMap)
   }
 
+  clear(): FixedMap<Key,Value> {
+    this.map.clear()
+    return new FixedMap(this.map)
+  }
+
 }

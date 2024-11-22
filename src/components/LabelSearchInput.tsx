@@ -49,8 +49,12 @@ export const LabelSearchInput = <R,>({
   onChange,
   sortOption,
 }: LabelSerachProps<R>) => {
-  const [selectedOptions, setOptions] = useState<R[]>([]);
+  const [selectedOptions, setOptions] = useState<R[]>([]); //
 
+  // i dont want to lift the selectedOption state,
+  // so we may use a useEffect to intercept changes in the props to update the internal state
+  // prototype? -> hp-frontend
+  // https://github.com/xEatos/hp-frontend/blob/main/haushaltsplan-app/src/app/reactCycleTest.tsx
   useEffect(() => {
     onChange?.(selectedOptions);
   });
