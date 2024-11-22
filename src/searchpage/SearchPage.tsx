@@ -5,6 +5,7 @@ import { MediaQuery, MediumEdge } from '../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../components/MediumCard';
 import { gql } from '../__generated__';
 import { Box } from '@mui/material';
+import { LabelSearchInput } from '../components/LabelSearchInput';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
@@ -18,7 +19,15 @@ const FilterPanel = () => {
       size={{ xs: 2 }}
       sx={{ padding: 1, border: '0px solid blue' }}
     >
-      FilterPanel
+      <div>
+        <LabelSearchInput
+          name='Language'
+          _labels={['de', 'en', 'fr', 'es']}
+          onChange={(activeValues) => {
+            console.log('e');
+          }}
+        />
+      </div>
     </Grid>
   );
 };
@@ -78,7 +87,9 @@ const MediaViewPanel = () => {
       }}
     >
       {data?.mediaConnections?.edges?.flatMap((edge) => {
-        return Array(20).fill(<MediumCard {...toModel(edge)} />);
+        return Array(20)
+          .fill(0)
+          .map((_, index) => <MediumCard key={index} {...toModel(edge)} />);
       })}
     </Grid>
   );
@@ -88,7 +99,7 @@ export const SearchPage: React.FC<SearchPageProps> = (props) => {
   return (
     <Grid
       container
-      direction="row"
+      direction='row'
       size={{ xs: 12 }}
       sx={{ border: '0px solid black' }}
     >

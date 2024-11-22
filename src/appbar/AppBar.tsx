@@ -6,14 +6,14 @@ import { SearchInput } from './SearchInput';
 
 export const BNAppBar: React.FC = () => {
   return (
-    <AppBar position="sticky">
+    <AppBar position='sticky'>
       <Toolbar>
-        <IconButton edge="start">
-          <AppsIcon fontSize="large" sx={{ fill: 'white' }} />
+        <IconButton edge='start'>
+          <AppsIcon fontSize='large' sx={{ fill: 'white' }} />
         </IconButton>
         <SearchInput sx={{ mr: 'auto' }} />
-        <IconButton edge="end">
-          <AccountCircle fontSize="large" sx={{ fill: 'white' }} />
+        <IconButton edge='end'>
+          <AccountCircle fontSize='large' sx={{ fill: 'white' }} />
         </IconButton>
       </Toolbar>
     </AppBar>

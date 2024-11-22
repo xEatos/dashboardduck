@@ -3,7 +3,7 @@ import { BNAppBar } from './appbar/AppBar';
 import { MediumCard, MediumCardProp } from './components/MediumCard';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { SearchPage } from './searchpage/Page';
+import { SearchPage } from './searchpage/SearchPage';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
@@ -15,7 +15,7 @@ const client = new ApolloClient({
 const App = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="content">
+      <div className='content'>
         <BNAppBar />
         <SearchPage filterPanel={<Box>Content</Box>} />
         <Box
@@ -25,7 +25,7 @@ const App = () => {
             boxSizing: 'border-box',
           }}
         >
-          Footer
+          Pagination
         </Box>
       </div>
     </ApolloProvider>

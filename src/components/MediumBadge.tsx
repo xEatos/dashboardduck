@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import VideoIcon from '../icons/VideoIcon';
 import { Podcasts } from '@mui/icons-material';
+import PodcastIcon from '../icons/PodcastIcon';
 
 export const MediumBadge = ({ type }: { type: 'Video' | 'Podcast' }) => (
   <Box
