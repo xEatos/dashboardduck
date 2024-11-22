@@ -4,13 +4,29 @@ import React, { PropsWithChildren } from 'react';
 import { MediaQuery, MediumEdge } from '../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../components/MediumCard';
 import { gql } from '../__generated__';
-import { Box } from '@mui/material';
 import { LabelSearchInput } from '../components/LabelSearchInput';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
   //mediaGridView: React.FC<PropsWithChildren>;
 }
+
+const iso639_1 = [
+  'bo',
+  'br',
+  'bs',
+  'ca',
+  'ce',
+  'ch',
+  'co',
+  'cr',
+  'cs',
+  'cu',
+  'cv',
+  'cy',
+  'da',
+  'de',
+];
 
 const FilterPanel = () => {
   return (
@@ -21,10 +37,20 @@ const FilterPanel = () => {
     >
       <div>
         <LabelSearchInput
-          name='Language'
-          _labels={['de', 'en', 'fr', 'es']}
-          onChange={(activeValues) => {
-            console.log('e');
+          options={iso639_1}
+          label={'Languages'}
+          renderOption={(option) => option}
+          renderChip={(option) => option}
+          isOptionEqualToValue={(opt, val) => opt === val}
+          sortOption={(a, b) => {
+            const res = a.localeCompare(b);
+            if (res === 0) {
+              return 0;
+            } else if (res < 0) {
+              return -1;
+            } else {
+              return 1;
+            }
           }}
         />
       </div>

@@ -7,18 +7,21 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { FixedMap } from '../utils/fixedMap';
 
-export interface LabelSerachProps {
-  onChange?: (activeLabels: string[]) => void;
-  _labels: string[];
-  name: string;
-  initActiveLabels?: string[];
-  sortFunc?: (a: string, b: string) => [-1, 0, 1];
+export interface LabelSerachProps<T> {
+  options: T[];
+  renderOption: (option: T, isSelected: boolean) => React.ReactNode;
+  renderChip: (option: T) => string;
+  label: React.ReactNode;
+  initSelectedOptions?: T[];
+  isOptionEqualToValue: (option: T, value: T) => boolean;
+  sortOption?: (a: T, b: T) => -1 | 0 | 1;
+  onChange?: (selectedOptions: T[]) => void;
 }
 
 interface Label {
@@ -29,17 +32,6 @@ interface Label {
 const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
 const checkedIcon = <CheckBoxIcon fontSize='small' />;
 
-const getDiff = (left: Label[], right: Label[]): Label[] => {
-  const l = left.map((v) => v.label);
-  const r = right.map((v) => v.label);
-  const leftItemsNotInRight = l.filter((leftValue) => !r.includes(leftValue));
-  const rightItemNotInRight = r.filter((rightValue) => !l.includes(rightValue));
-  return [...leftItemsNotInRight, ...rightItemNotInRight].map((v) => ({
-    label: v,
-    isActive: true,
-  }));
-};
-
 interface LabelState {
   currentActiveLabels: Label[];
   labels: FixedMap<string, boolean>;
@@ -47,45 +39,23 @@ interface LabelState {
 
 // pressing enter-key on item not working correctly
 // somhow the retun of newValues is incorrect in onChange((event, newValue) => {})
-export const LabelSearchInput: React.FC<LabelSerachProps> = ({
-  _labels,
-  name,
-  initActiveLabels,
+export const LabelSearchInput = <R,>({
+  options,
+  initSelectedOptions,
+  renderChip,
+  renderOption,
+  label,
+  isOptionEqualToValue,
   onChange,
-  sortFunc,
-}) => {
-  const allMap = FixedMap.of<string, boolean>().setBatch(
-    _labels.map((value) => [value, false]),
-  );
-  const allMapWithInitActive = initActiveLabels
-    ? allMap.setBatch(initActiveLabels.map((value) => [value, false]))
-    : allMap;
+  sortOption,
+}: LabelSerachProps<R>) => {
+  const [selectedOptions, setOptions] = useState<R[]>([]);
 
-  const [labels, setLabels] = useState<LabelState>({
-    labels: allMapWithInitActive,
-    currentActiveLabels: [],
+  useEffect(() => {
+    onChange?.(selectedOptions);
   });
 
-  console.log('labels', labels);
-
-  const removeLabel = (label: string) => {
-    setLabels({
-      currentActiveLabels: labels.currentActiveLabels.filter(
-        (other) => other.label != label,
-      ),
-      labels: labels.labels.set(label, false),
-    });
-  };
-
-  const addLabel = (label: string) => {
-    setLabels({
-      currentActiveLabels: [
-        ...labels.currentActiveLabels,
-        { label, isActive: true },
-      ],
-      labels: labels.labels.set(label, true),
-    });
-  };
+  console.log('options: ', selectedOptions);
 
   return (
     <Paper square sx={{ padding: 2 }}>
@@ -96,85 +66,54 @@ export const LabelSearchInput: React.FC<LabelSerachProps> = ({
         spacing={2}
         sx={{ alignItems: 'center' }}
       >
-        <Typography>{name}</Typography>
+        {label}
         <Autocomplete
           style={{ width: '300px' }}
           multiple
-          value={labels.currentActiveLabels}
-          isOptionEqualToValue={(option, value) => option.label === value.label}
-          options={labels.labels.mapToArray((key, value) => ({
-            label: key,
-            isActive: value,
-          }))}
+          value={selectedOptions}
+          isOptionEqualToValue={isOptionEqualToValue}
+          options={options.sort?.(sortOption) ?? options}
           renderTags={() => null}
-          getOptionLabel={(option) => option.label}
-          renderOption={(props, option, state, ownerState) => {
+          renderOption={(props, option) => {
             const { key, ...optionProps } = props;
+            const isSelected =
+              selectedOptions.find((opt) =>
+                isOptionEqualToValue(opt, option),
+              ) !== undefined;
             return (
-              <li
-                key={key}
-                {...optionProps}
-                /*
-                onClick={(event) => {
-                  event.preventDefault();
-                  option.isActive
-                    ? removeLabel(option.label)
-                    : addLabel(option.label);
-                }}*/
-              >
+              <li key={key} {...optionProps}>
                 <Checkbox
                   icon={icon}
                   checkedIcon={checkedIcon}
                   style={{ marginRight: 8 }}
-                  checked={option.isActive}
-                  /*
-                  onClick={(event) => {
-                    event.preventDefault();
-                    option.isActive
-                      ? removeLabel(option.label)
-                      : addLabel(option.label);
-                  }}*/
+                  checked={isSelected}
                 />
-                {option.label}
+                {renderOption(option, isSelected)}
               </li>
             );
           }}
-          onChange={(event, newCurrentActiveLabels, reason) => {
+          onChange={(event, newSelectOptions) => {
             event.preventDefault();
-            console.log('pass:', newCurrentActiveLabels, reason);
-            const allFalse = labels.labels.mapValues(() => false);
-            const allFalseExpectActiveLabel = allFalse.setBatch(
-              newCurrentActiveLabels.map((l) => [l.label, true]),
-            );
-            setLabels({
-              currentActiveLabels: allFalseExpectActiveLabel
-                .filter((_, v) => v)
-                .mapToArray((k, v) => ({
-                  label: k,
-                  isActive: v,
-                })),
-              labels: allFalseExpectActiveLabel,
-            });
+            setOptions(newSelectOptions);
           }}
-          renderInput={(params) => <TextField {...params} placeholder={name} />}
+          renderInput={(params) => (
+            <TextField {...params} placeholder={'...'} />
+          )}
         />
       </Grid>
-      <Grid>
-        {labels.currentActiveLabels.map(({ label }) => (
-          <Chip
-            key={label}
-            label={label}
-            variant='outlined'
-            onDelete={() => {
-              setLabels({
-                currentActiveLabels: labels.currentActiveLabels.filter(
-                  (other) => other.label != label,
-                ),
-                labels: labels.labels.set(label, false),
-              });
-            }}
-          />
-        ))}
+      <Grid container spacing={0.75} sx={{ paddingTop: 1 }}>
+        {selectedOptions.sort(sortOption).map((value) => {
+          return (
+            <Chip
+              key={renderChip(value)}
+              variant='outlined'
+              label={renderChip(value)}
+              onDelete={() =>
+                setOptions(selectedOptions.filter((option) => option != value))
+              }
+            ></Chip>
+          );
+        })}
       </Grid>
     </Paper>
   );
