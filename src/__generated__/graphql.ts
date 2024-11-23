@@ -16,6 +16,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type FilterOption = {
+  __typename?: 'FilterOption';
+  /**  e.g. minDate, language (unique) -> rename to filterID: String!, then use Label as actual */
+  filterId: Scalars['String']['output'];
+  /**  e.g. Datepicker, Slider, FreeSolo, LabelSearch, Radio  */
+  filterType: Scalars['String']['output'];
+  /** group to associate this filter */
+  group?: Maybe<Scalars['String']['output']>;
+  /** label that should be used for the input widget */
+  label: Scalars['String']['output'];
+  /**  e.g. for language: en, de. for Datepicker: interval [date A, date B]  */
+  options: Array<WikiData>;
+};
+
+export type FilterSelectionInput = {
+  /**  e.g. minDate, language  */
+  label: Scalars['String']['input'];
+  /**  selected literal values, e.g. minDate: 2024-01-01  */
+  literals: Array<WikiDataLiteralInput>;
+  /**  selected resources e.g. Q6  */
+  resources: Array<WikiDataResourceInput>;
+};
+
 export type Medium = {
   __typename?: 'Medium';
   channel?: Maybe<Scalars['String']['output']>;
@@ -55,6 +78,50 @@ export type Query = {
 export type QueryMediaConnectionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first: Scalars['Int']['input'];
+};
+
+export enum ValueType {
+  Date = 'Date',
+  Duration = 'Duration',
+  Iso639 = 'ISO639',
+  Number = 'Number',
+  String = 'String'
+}
+
+export type WikiData = WikiDataLiteral | WikiDataResource;
+
+export type WikiDataLiteral = {
+  __typename?: 'WikiDataLiteral';
+  /**  language tag (ISO639) of the Literal if it is a text  */
+  lang?: Maybe<Scalars['String']['output']>;
+  /**  Datatype of the value */
+  type: ValueType;
+  /** " Text that represents the actual value  */
+  value: Scalars['String']['output'];
+};
+
+export type WikiDataLiteralInput = {
+  /**  language tag (ISO639) of the Literal if it is a text  */
+  lang?: InputMaybe<Scalars['String']['input']>;
+  /**  Datatype of the value */
+  type: ValueType;
+  /** " Text that represents the actual value  */
+  value: Scalars['String']['input'];
+};
+
+export type WikiDataResource = {
+  __typename?: 'WikiDataResource';
+  /** " IRI with Q or P-Number  */
+  id: Scalars['ID']['output'];
+  /**  label of the Q or P-Number  */
+  label: Scalars['String']['output'];
+};
+
+export type WikiDataResourceInput = {
+  /** " IRI with Q or P-Number  */
+  id: Scalars['ID']['input'];
+  /**  label of the Q or P-Number  */
+  label: Scalars['String']['input'];
 };
 
 export type MediaQueryVariables = Exact<{

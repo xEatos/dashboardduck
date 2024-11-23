@@ -1,10 +1,17 @@
 import { useQuery } from '@apollo/client';
 import Grid from '@mui/material/Grid2';
 import React, { PropsWithChildren } from 'react';
-import { MediaQuery, MediumEdge } from '../__generated__/graphql';
+import {
+  MediaQuery,
+  MediumEdge,
+  WikiData,
+  WikiDataLiteral,
+  WikiDataResource,
+} from '../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../components/MediumCard';
 import { gql } from '../__generated__';
 import { LabelSearchInput } from '../components/LabelSearchInput';
+import { FilterToInputFactory } from './FilterPanel';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
@@ -36,23 +43,38 @@ const FilterPanel = () => {
       sx={{ padding: 1, border: '0px solid blue' }}
     >
       <div>
-        <LabelSearchInput
-          options={iso639_1}
-          label={'Languages'}
-          renderOption={(option) => option}
-          renderChip={(option) => option}
-          isOptionEqualToValue={(opt, val) => opt === val}
-          sortOption={(a, b) => {
-            const res = a.localeCompare(b);
-            if (res === 0) {
-              return 0;
-            } else if (res < 0) {
-              return -1;
-            } else {
-              return 1;
-            }
-          }}
-        />
+        {FilterToInputFactory({
+          filterId: 'spokenLangauge',
+          filterType: 'LabelSearchInput',
+          label: 'Language',
+          options: Array<WikiData>(
+            {
+              value: 'en',
+              type: 'ISO639',
+              __typename: 'WikiDataLiteral',
+            } as WikiDataLiteral,
+            {
+              value: 'de',
+              type: 'ISO639',
+              __typename: 'WikiDataLiteral',
+            } as WikiDataLiteral,
+            {
+              value: 'fr',
+              type: 'ISO639',
+              __typename: 'WikiDataLiteral',
+            } as WikiDataLiteral,
+            {
+              id: 'https://bnwiki.wikibase.cloud/entity/Q6',
+              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
+              __typename: 'WikiDataResource',
+            } as WikiDataResource,
+            {
+              id: 'https://bnwiki.wikibase.cloud/entity/Q8',
+              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
+              __typename: 'WikiDataResource',
+            } as WikiDataResource,
+          ),
+        })}
       </div>
     </Grid>
   );

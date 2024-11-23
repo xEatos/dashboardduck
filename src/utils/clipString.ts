@@ -1,1 +1,1 @@
-export const clip = (str: string, prefix: string, maxLength: number, ): string => (str.length + prefix.length < maxLength ? str : `${str.slice(0, maxLength)}${prefix}`)
+export const clip = (str: string, suffix: string, maxLength: number, ): string => (str.length + suffix.length < maxLength ? str : `${str.slice(0, maxLength)}${suffix}`)

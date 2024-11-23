@@ -18,7 +18,7 @@ const iso639_1Codes: string[] = [
   'yo', 'za', 'zh', 'zu'
 ];
 
-class ISO639 {
+export class ISO639 {
   id
 
   private constructor(id: string){
@@ -27,5 +27,9 @@ class ISO639 {
 
   static of(id :string){
     return iso639_1Codes.includes(id) ? new ISO639(id) : undefined
+  }
+
+  toString(){
+    return this.id
   }
 }

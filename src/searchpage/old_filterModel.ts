@@ -1,4 +1,6 @@
+import { ReactNode } from 'react';
 import { FixedMap } from '../utils/fixedMap';
+import { WikiDataLiteral, WikiDataResource } from '../utils/wikidataModel';
 
 // unhappy with this model
 // TODOs:
@@ -10,6 +12,33 @@ import { FixedMap } from '../utils/fixedMap';
 //    e.g. duration P13M7S -> 13min 7sec or 13:07
 // some sort of FilterResult obejct that is create by filter if something changes
 // to easier process for request calls
+
+type FilterCommand = {
+  operation: "Filter" | "Entity"
+  type: "Number" | "Date" | "Duration" | "String"
+  value: (WikiDataLiteral | WikiDataResource)[]
+  propPath?: WikiDataResource
+}
+
+// or?
+
+type FilterAction = {
+  type: string
+  payload: any
+}
+
+// -> FilterModel for rendering a input widget which in turn generates a FilterAction that can be interpreted by the backend!
+
+export interface _FilterModel<L, T> {
+  label: L;
+  renderLabel: (label: L) => ReactNode;
+  renderInput: (filterModel: _FilterModel<L, T>) => ReactNode;
+  options?: FixedMap<string, Option<T>>
+  onChange: () => void
+  generateFilterAction: () => void
+}
+
+// or
 
 export interface Filter<T> {
   label: string;
