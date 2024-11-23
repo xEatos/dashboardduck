@@ -35,17 +35,21 @@ const isDate = (value: unknown): value is LocalDate =>
   value instanceof LocalDate;
 
 
+const compare = (equal: boolean, negative: boolean): 1 | 0 | -1 => {
+  if (equal) {
+    return 0;
+  } else if (negative) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 const compareResource = (a: WikiDataResource, b: WikiDataResource): 1 | 0 | -1 => {
   const res1 = a.label.localeCompare(b.label);
   if (res1 === 0) {
     const res2 = a.id.localeCompare(b.id);
-    if (res2 === 0) {
-      return 0;
-    } else if (res2 < 0) {
-      return -1;
-    } else {
-      return 1;
-    }
+    return compare(res2 === 0, res2 < 0)
   } else if (res1 < 0) {
     return -1;
   } else {
@@ -53,57 +57,8 @@ const compareResource = (a: WikiDataResource, b: WikiDataResource): 1 | 0 | -1 =
   }
 };
 
-const compareString = (a: string, b: string): 1 | 0 | -1 => {
-  const res = a.localeCompare(b);
-  if (res === 0) {
-    return 0;
-  } else if (res < 0) {
-    return -1;
-  } else {
-    return 1;
-  }
-};
-
-const compareDate = (a: LocalDate, b: LocalDate): 1 | 0 | -1 => {
-  if (a.equals(b)) {
-    return 0;
-  } else if (a.isAfter(b)) {
-    return 1;
-  } else {
-    return -1;
-  }
-};
-
-const compareNumber = (a: Number, b: Number): 1 | 0 | -1 => {
-  if (a === b) {
-    return 0;
-  } else if (a > b) {
-    return 1;
-  } else {
-    return -1;
-  }
-};
-
-const compareISO639 = (a: ISO639, b: ISO639) => compareString(a.id, b.id);
-
-const compareDuration = (a: Duration, b: Duration) =>
-  compareNumber(a.seconds(), b.seconds());
-
-export const compareWikiData = (a: WikiData, b: WikiData): 1 | 0 | -1 => {
- 
-  if (
-    a.__typename === b.__typename &&
-    a.__typename === 'WikiDataResource' &&
-    b.__typename === 'WikiDataResource'
-  ) {
-    return compareResource(a, b);
-  }
-  else if (
-    a.__typename === b.__typename &&
-    a.__typename === 'WikiDataLiteral' &&
-    b.__typename === 'WikiDataLiteral'
-  ) {
-    const valueA = mapWikiDataToValue(a);
+const compareLiteral = (a: WikiDataLiteral, b: WikiDataLiteral): 1 | 0 | -1 => {
+  const valueA = mapWikiDataToValue(a);
     const valueB = mapWikiDataToValue(b)
     if(isString(valueA) && isString(valueB)){
       return compareString(valueA, valueB)
@@ -118,19 +73,48 @@ export const compareWikiData = (a: WikiData, b: WikiData): 1 | 0 | -1 => {
     } else {
       return compareString(a.value, b.value)
     }
+}
+
+const compareString = (a: string, b: string): 1 | 0 | -1 => {
+  const res = a.localeCompare(b);
+  return compare(res === 0, res < 0)
+};
+
+const compareDate = (a: LocalDate, b: LocalDate): 1 | 0 | -1 => compare(a.equals(b), a.isAfter(b));
+
+const compareNumber = (a: Number, b: Number): 1 | 0 | -1 => compare(a === b, a < b);
+
+const compareISO639 = (a: ISO639, b: ISO639) => compareString(a.id, b.id);
+
+const compareDuration = (a: Duration, b: Duration) =>
+  compareNumber(a.seconds(), b.seconds());
+
+export const compareWikiData = (a: WikiData, b: WikiData): 1 | 0 | -1 => {
+  if (
+    a.__typename === b.__typename &&
+    a.__typename === 'WikiDataResource' &&
+    b.__typename === 'WikiDataResource'
+  ) {
+    return compareResource(a, b);
+  }
+  else if (
+    a.__typename === b.__typename &&
+    a.__typename === 'WikiDataLiteral' &&
+    b.__typename === 'WikiDataLiteral'
+  ) {
+    return compareLiteral(a, b)
   } else {
     if(a.__typename === 'WikiDataLiteral' &&
       b.__typename === 'WikiDataResource') {
         return compareString(a.value, b.label)
       } else {
-        return compareString((b as WikiDataLiteral).value, (a as WikiDataResource).label)
+        return compareString((a as WikiDataResource).label, (b as WikiDataLiteral).value)
       }
   }
 };
 
 export const isSame = (a: WikiData, b: WikiData): boolean => {
   const res = (compareWikiData(a, b) === 0)
-  console.log("isSame", a, b, "res:", res)
   return res;
 }
 

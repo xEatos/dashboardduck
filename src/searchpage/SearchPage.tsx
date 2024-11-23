@@ -18,23 +18,6 @@ export interface SearchPageProps {
   //mediaGridView: React.FC<PropsWithChildren>;
 }
 
-const iso639_1 = [
-  'bo',
-  'br',
-  'bs',
-  'ca',
-  'ce',
-  'ch',
-  'co',
-  'cr',
-  'cs',
-  'cu',
-  'cv',
-  'cy',
-  'da',
-  'de',
-];
-
 const FilterPanel = () => {
   return (
     <Grid
@@ -59,17 +42,17 @@ const FilterPanel = () => {
               __typename: 'WikiDataLiteral',
             } as WikiDataLiteral,
             {
+              id: 'https://bnwiki.wikibase.cloud/entity/Q8',
+              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
+              __typename: 'WikiDataResource',
+            } as WikiDataResource,
+            {
               value: 'fr',
               type: 'ISO639',
               __typename: 'WikiDataLiteral',
             } as WikiDataLiteral,
             {
               id: 'https://bnwiki.wikibase.cloud/entity/Q6',
-              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
-              __typename: 'WikiDataResource',
-            } as WikiDataResource,
-            {
-              id: 'https://bnwiki.wikibase.cloud/entity/Q8',
               label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
               __typename: 'WikiDataResource',
             } as WikiDataResource,

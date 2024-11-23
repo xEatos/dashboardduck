@@ -35,8 +35,6 @@ export const LabelSearchInput = <R,>({
     initSelectedOptions ?? [],
   ); //
 
-  console.log(selectedOptions);
-
   // i dont want to lift the selectedOption state,
   // so we may use a useEffect to intercept changes in the props to update the internal state
   // prototype? -> hp-frontend
@@ -92,6 +90,7 @@ export const LabelSearchInput = <R,>({
       </Grid>
       <Grid container spacing={0.75} sx={{ paddingTop: 1 }}>
         {selectedOptions.sort(sortOption).map((value) => {
+          console.log(value);
           return (
             <Chip
               key={getOptionLabel(value)}
