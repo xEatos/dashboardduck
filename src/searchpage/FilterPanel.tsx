@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FilterOption,
   FilterSelectionInput,
@@ -8,6 +8,7 @@ import {
 import { LabelSearchInput } from '../components/LabelSearchInput';
 import { Typography } from '@mui/material';
 import {
+  compare,
   compareWikiData,
   isSame,
   wikiDataToString,
@@ -30,7 +31,11 @@ const WikiDataComponent: React.FC<WikiData> = (props) => {
         >
           {clip(props.label, '…', 30)}
         </Typography>
-        <Typography component={'span'} variant='body2'>
+        <Typography
+          component={'span'}
+          variant='body2'
+          sx={{ color: '#606060' }}
+        >
           ({props.id.split('/').pop()})
         </Typography>
       </span>
@@ -48,7 +53,10 @@ const createLabelSearchInput = (filter: FilterOption): React.ReactNode => (
     getOptionLabel={(option) => wikiDataToStringWithId(option)}
     renderOption={(option) => <WikiDataComponent {...option} />}
     renderChip={(option) => <WikiDataComponent {...option} />}
-    sortOption={compareWikiData}
+    sortOption={(a, b) => {
+      const r = compareWikiData(a, b);
+      return compare(r === 0, r === 1);
+    }}
   />
 );
 
@@ -62,12 +70,23 @@ export const FilterToInputFactory = (filter: FilterOption): React.ReactNode => {
 };
 
 export const FilterPanel: React.FC<FilterPanelProps> = (props) => {
-  // map filterModel to input widgets view,
-  // may request new fetch based on filters
-  // delay request
-  // hook on change events -> cache local
-  // aggregate filter state based on changed on the filters
-  // reset
+  const [filterSelections, setFilterSelection] = useState<
+    FilterSelectionInput[]
+  >([]);
+
+  /* 
+  useEffect(() => {
+    // refetch 
+  })
+  */
+
+  const updateFilter = (selected: FilterSelectionInput) => {
+    setFilterSelection(
+      filterSelections.map((selection) =>
+        selected.filterId === selection.filterId ? selected : selection,
+      ),
+    );
+  };
 
   return <></>;
 };

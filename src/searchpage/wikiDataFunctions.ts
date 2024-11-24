@@ -35,7 +35,7 @@ const isDate = (value: unknown): value is LocalDate =>
   value instanceof LocalDate;
 
 
-const compare = (equal: boolean, negative: boolean): 1 | 0 | -1 => {
+export const compare = (equal: boolean, negative: boolean): 1 | 0 | -1 => {
   if (equal) {
     return 0;
   } else if (negative) {

@@ -32,7 +32,7 @@ export type FilterOption = {
 
 export type FilterSelectionInput = {
   /**  e.g. minDate, language  */
-  label: Scalars['String']['input'];
+  filterId: Scalars['String']['input'];
   /**  selected literal values, e.g. minDate: 2024-01-01  */
   literals: Array<WikiDataLiteralInput>;
   /**  selected resources e.g. Q6  */

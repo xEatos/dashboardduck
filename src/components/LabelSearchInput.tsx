@@ -1,8 +1,16 @@
-import { Autocomplete, Checkbox, Chip, Paper, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Checkbox,
+  Chip,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 
 export interface LabelSerachProps<T> {
   label: React.ReactNode;
@@ -84,10 +92,16 @@ export const LabelSearchInput = <R,>({
             setOptions(newSelectOptions);
           }}
           renderInput={(params) => (
-            <TextField {...params} placeholder={'...'} />
+            <TextField
+              {...params}
+              placeholder={`Selected: ${selectedOptions.length}`}
+            />
           )}
         />
       </Grid>
+      <SimpleTreeView>
+        <TreeItem itemId={'bla'} label={<Typography>Blub</Typography>} />
+      </SimpleTreeView>
       <Grid container spacing={0.75} sx={{ paddingTop: 1 }}>
         {selectedOptions.sort(sortOption).map((value) => {
           console.log(value);
