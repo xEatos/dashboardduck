@@ -1,5 +1,6 @@
 import {
   Autocomplete,
+  Box,
   Checkbox,
   Chip,
   Paper,
@@ -52,71 +53,71 @@ export const LabelSearchInput = <R,>({
   });
 
   return (
-    <Paper square sx={{ padding: 2 }}>
-      <Grid
-        container
-        direction='row'
-        wrap='nowrap'
-        spacing={2}
-        sx={{ alignItems: 'center' }}
-      >
-        {label}
-        <Autocomplete
-          style={{ width: '300px' }}
-          multiple
-          value={selectedOptions}
-          isOptionEqualToValue={isOptionEqualToValue}
-          options={options.sort?.(sortOption) ?? options}
-          renderTags={() => null}
-          getOptionLabel={getOptionLabel}
-          renderOption={(props, option) => {
-            const { key, ...optionProps } = props;
-            const isSelected =
-              selectedOptions.find((opt) =>
-                isOptionEqualToValue(opt, option),
-              ) !== undefined;
+    <Box sx={{ padding: 0.75, margin: '4px 8px 4px 16px', width: '420px' }}>
+      <Grid container direction='column'>
+        <Grid
+          container
+          direction='row'
+          wrap='nowrap'
+          spacing={2}
+          sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+        >
+          {label}:
+          <Autocomplete
+            multiple
+            value={selectedOptions}
+            isOptionEqualToValue={isOptionEqualToValue}
+            options={options.sort(sortOption)}
+            renderTags={() => null}
+            getOptionLabel={getOptionLabel}
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
+              const isSelected =
+                selectedOptions.find((opt) =>
+                  isOptionEqualToValue(opt, option),
+                ) !== undefined;
+              return (
+                <li key={key} {...optionProps}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={isSelected}
+                  />
+                  {renderOption(option, isSelected)}
+                </li>
+              );
+            }}
+            onChange={(event, newSelectOptions) => {
+              event.preventDefault();
+              setOptions(newSelectOptions);
+            }}
+            renderInput={(params) => (
+              <TextField
+                sx={{ width: '300px' }}
+                {...params}
+                placeholder={`Selected: ${selectedOptions.length}`}
+              />
+            )}
+          />
+        </Grid>
+        <Grid container spacing={0.75} sx={{ paddingTop: 1 }}>
+          {selectedOptions.sort(sortOption).map((value) => {
             return (
-              <li key={key} {...optionProps}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={isSelected}
-                />
-                {renderOption(option, isSelected)}
-              </li>
+              <Chip
+                key={getOptionLabel(value)}
+                variant='outlined'
+                label={renderChip(value)}
+                onDelete={() =>
+                  setOptions(
+                    selectedOptions.filter((option) => option != value),
+                  )
+                }
+              />
             );
-          }}
-          onChange={(event, newSelectOptions) => {
-            event.preventDefault();
-            setOptions(newSelectOptions);
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder={`Selected: ${selectedOptions.length}`}
-            />
-          )}
-        />
+          })}
+        </Grid>
       </Grid>
-      <SimpleTreeView>
-        <TreeItem itemId={'bla'} label={<Typography>Blub</Typography>} />
-      </SimpleTreeView>
-      <Grid container spacing={0.75} sx={{ paddingTop: 1 }}>
-        {selectedOptions.sort(sortOption).map((value) => {
-          console.log(value);
-          return (
-            <Chip
-              key={getOptionLabel(value)}
-              variant='outlined'
-              label={renderChip(value)}
-              onDelete={() =>
-                setOptions(selectedOptions.filter((option) => option != value))
-              }
-            />
-          );
-        })}
-      </Grid>
-    </Paper>
+    </Box>
   );
 };

@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
+    "\n  query FilterOptions {\n  filterOptions {\n    filterId\n    filterType\n    label\n    group\n    options {\n      ... on WikiDataResource {\n        __typename\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        __typename\n        lang\n        type\n        value\n      }\n    }\n  }\n}\n": types.FilterOptionsDocument,
     "\n  query Media($first: Int!) {\n  mediaConnections(first: $first) {\n    edges {\n      node {\n        id\n        title\n        thumbnail\n        publication\n        duration\n        channel\n      }\n      cursor\n    }\n  }\n}\n": types.MediaDocument,
 };
 
@@ -31,6 +32,10 @@ const documents = {
  */
 export function gql(source: string): unknown;
 
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query FilterOptions {\n  filterOptions {\n    filterId\n    filterType\n    label\n    group\n    options {\n      ... on WikiDataResource {\n        __typename\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        __typename\n        lang\n        type\n        value\n      }\n    }\n  }\n}\n"): (typeof documents)["\n  query FilterOptions {\n  filterOptions {\n    filterId\n    filterType\n    label\n    group\n    options {\n      ... on WikiDataResource {\n        __typename\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        __typename\n        lang\n        type\n        value\n      }\n    }\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

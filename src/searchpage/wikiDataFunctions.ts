@@ -13,7 +13,7 @@ export const mapWikiDataToValue = (
       case ValueType.String:
         return wikiLiteral.value;
       case ValueType.Date:
-        return LocalDate.parse(wikiLiteral.value);
+        return LocalDate.parse(wikiLiteral.value.slice(0, 10));
       case ValueType.Number:
         return Number(wikiLiteral.value);
       case ValueType.Duration:

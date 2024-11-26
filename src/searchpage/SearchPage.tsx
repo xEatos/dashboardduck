@@ -10,13 +10,13 @@ import {
 } from '../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../components/MediumCard';
 import { gql } from '../__generated__';
-import { LabelSearchInput } from '../components/LabelSearchInput';
-import { FilterToInputFactory } from './FilterPanel';
+import { filterToInputFactory } from '../components/InputFactory';
+import { FilterPanel } from './FilterPanel';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
-  //mediaGridView: React.FC<PropsWithChildren>;
 }
+/*
 
 const FilterPanel = () => {
   return (
@@ -26,7 +26,7 @@ const FilterPanel = () => {
       sx={{ padding: 1, border: '0px solid blue' }}
     >
       <div>
-        {FilterToInputFactory({
+        {filterToInputFactory({
           filterId: 'spokenLangauge',
           filterType: 'LabelSearchInput',
           label: 'Language',
@@ -62,6 +62,7 @@ const FilterPanel = () => {
     </Grid>
   );
 };
+*/
 
 const GET_MEDIA = gql(`
   query Media($first: Int!) {
@@ -132,6 +133,7 @@ export const SearchPage: React.FC<SearchPageProps> = (props) => {
       container
       direction='row'
       size={{ xs: 12 }}
+      columnGap={3}
       sx={{ border: '0px solid black' }}
     >
       <FilterPanel />

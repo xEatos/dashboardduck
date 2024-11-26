@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import {
   FilterOption,
   FilterSelectionInput,
@@ -15,78 +15,100 @@ import {
   wikiDataToStringWithId,
 } from './wikiDataFunctions';
 import { clip } from '../utils/clipString';
+import { WikiDataItem } from '../components/WikiDataItem';
+import { gql } from '../__generated__';
+import { useQuery } from '@apollo/client';
+import { filterToInputFactory } from '../components/InputFactory';
+import Grid from '@mui/material/Grid2';
+import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 
 export interface FilterPanelProps {
   filters: FilterOption[];
 }
 
-const WikiDataComponent: React.FC<WikiData> = (props) => {
-  if (props.__typename === 'WikiDataResource') {
-    return (
-      <span>
-        <Typography
-          component={'span'}
-          variant='body1'
-          sx={{ paddingRight: 0.5 }}
-        >
-          {clip(props.label, '…', 30)}
-        </Typography>
-        <Typography
-          component={'span'}
-          variant='body2'
-          sx={{ color: '#606060' }}
-        >
-          ({props.id.split('/').pop()})
-        </Typography>
-      </span>
-    );
-  } else {
-    return <Typography>{wikiDataToString(props)}</Typography>;
+const GET_ALL_FILTER_OPTIONS = gql(`
+  query FilterOptions {
+  filterOptions {
+    filterId
+    filterType
+    label
+    group
+    options {
+      ... on WikiDataResource {
+        __typename
+        id
+        label
+      }
+      ... on WikiDataLiteral {
+        __typename
+        lang
+        type
+        value
+      }
+    }
   }
+}
+`);
+
+type FilterOptionGroup = Record<string, FilterOption[]>;
+
+const groupFilterOptionById = (
+  filterOpts: FilterOption[],
+): FilterOptionGroup => {
+  const g: FilterOptionGroup = {};
+  filterOpts.forEach((fopts) => {
+    if (Object.hasOwn(g, fopts.group ?? 'Rest')) {
+      g[fopts.group ?? 'Rest'].push(fopts);
+    } else {
+      g[fopts.group ?? 'Rest'] = [fopts];
+    }
+  });
+  return g;
 };
 
-const createLabelSearchInput = (filter: FilterOption): React.ReactNode => (
-  <LabelSearchInput
-    label={filter.label}
-    options={filter.options}
-    isOptionEqualToValue={isSame}
-    getOptionLabel={(option) => wikiDataToStringWithId(option)}
-    renderOption={(option) => <WikiDataComponent {...option} />}
-    renderChip={(option) => <WikiDataComponent {...option} />}
-    sortOption={(a, b) => {
-      const r = compareWikiData(a, b);
-      return compare(r === 0, r === 1);
-    }}
-  />
-);
+export const FilterPanel: React.FC = () => {
+  const { loading, error, data } = useQuery(GET_ALL_FILTER_OPTIONS);
 
-export const FilterToInputFactory = (filter: FilterOption): React.ReactNode => {
-  switch (filter.filterType) {
-    case 'LabelSearchInput':
-      return createLabelSearchInput(filter);
-    default:
-      return null;
-  }
-};
+  if (loading) return <p>Loading...</p>;
 
-export const FilterPanel: React.FC<FilterPanelProps> = (props) => {
-  const [filterSelections, setFilterSelection] = useState<
-    FilterSelectionInput[]
-  >([]);
+  if (error) return <p>Error : {error.message}</p>;
 
-  /* 
-  useEffect(() => {
-    // refetch 
-  })
-  */
+  const [groups, setGroups] = useState<string[]>(
+    data
+      ? Object.entries(groupFilterOptionById(data.filterOptions)).map(
+          ([key]) => key,
+        )
+      : [],
+  );
 
-  const updateFilter = (selected: FilterSelectionInput) => {
-    setFilterSelection(
-      filterSelections.map((selection) =>
-        selected.filterId === selection.filterId ? selected : selection,
-      ),
-    );
-  };
-
-  return <></>;
+  // instead of data use the groups array and get it from data
+  return data ? (
+    <SimpleTreeView
+      expandedItems={groups}
+      onItemExpansionToggle={(_, itemId, isExpanded) => {
+        if (isExpanded) {
+          setGroups([...groups, itemId]);
+        } else {
+          setGroups(groups.filter((otherItemId) => otherItemId != itemId)); // after a item is collapsed the component get unmounted -> resets internal state
+        }
+      }}
+    >
+      {Object.entries(groupFilterOptionById(data.filterOptions)).map(
+        ([group, fopts]) => {
+          return (
+            <TreeItem
+              itemId={group}
+              label={<Typography variant='h6'>{group}</Typography>}
+            >
+              {fopts.map((fopt) => (
+                <Fragment key={fopt.filterId}>
+                  {filterToInputFactory(fopt)}
+                </Fragment>
+              ))}
+            </TreeItem>
+          );
+        },
+      )}
+    </SimpleTreeView>
+  ) : null;
 };
