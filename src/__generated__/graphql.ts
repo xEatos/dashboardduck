@@ -34,9 +34,9 @@ export type FilterSelectionInput = {
   /**  e.g. minDate, language  */
   filterId: Scalars['String']['input'];
   /**  selected literal values, e.g. minDate: 2024-01-01  */
-  literals: Array<WikiDataLiteralInput>;
+  literals?: InputMaybe<Array<WikiDataLiteralInput>>;
   /**  selected resources e.g. Q6  */
-  resources: Array<WikiDataResourceInput>;
+  resources?: InputMaybe<Array<WikiDataResourceInput>>;
 };
 
 export type Medium = {
@@ -78,6 +78,7 @@ export type Query = {
 
 export type QueryMediaConnectionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Array<FilterSelectionInput>>;
   first: Scalars['Int']['input'];
 };
 

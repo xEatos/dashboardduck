@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import {
   FilterOption,
+  FilterOptionsQuery,
   FilterSelectionInput,
   WikiData,
   WikiDataLiteral,
@@ -66,13 +67,7 @@ const groupFilterOptionById = (
   return g;
 };
 
-export const FilterPanel: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_ALL_FILTER_OPTIONS);
-
-  if (loading) return <p>Loading...</p>;
-
-  if (error) return <p>Error : {error.message}</p>;
-
+const FilterTree = (data: FilterOptionsQuery) => {
   const [groups, setGroups] = useState<string[]>(
     data
       ? Object.entries(groupFilterOptionById(data.filterOptions)).map(
@@ -111,4 +106,14 @@ export const FilterPanel: React.FC = () => {
       )}
     </SimpleTreeView>
   ) : null;
+};
+
+export const FilterPanel: React.FC = () => {
+  const { loading, error, data } = useQuery(GET_ALL_FILTER_OPTIONS);
+
+  if (loading) return <p>Loading...</p>;
+
+  if (error) return <p>Error : {error.message}</p>;
+
+  return <>{data && <FilterTree filterOptions={data.filterOptions} />}</>;
 };
