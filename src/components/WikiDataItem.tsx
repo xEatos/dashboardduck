@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { WikiData } from '../__generated__/graphql';
-import { wikiDataToString } from '../searchpage/wikiDataFunctions';
+import { wikiDataToString } from '../utils/wikiDataFunctions';
 import { clip } from '../utils/clipString';
 
 export const WikiDataItem: React.FC<WikiData> = (props) => {

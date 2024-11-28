@@ -1,17 +1,20 @@
 import { useQuery } from '@apollo/client';
 import Grid from '@mui/material/Grid2';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useContext } from 'react';
 import {
+  FilterSelectionInput,
   MediaQuery,
   MediumEdge,
   WikiData,
   WikiDataLiteral,
-  WikiDataResource,
+  WikiDataResource
 } from '../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../components/MediumCard';
 import { gql } from '../__generated__';
-import { filterToInputFactory } from '../components/InputFactory';
+import { filterToInputFactory } from './InputFactory';
 import { FilterPanel } from './FilterPanel';
+import { SearchQueryContext, SearchQueryValues } from '../App';
+import { mapToWikiDataInput } from '../utils/wikiDataFunctions';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
@@ -65,8 +68,8 @@ const FilterPanel = () => {
 */
 
 const GET_MEDIA = gql(`
-  query Media($first: Int!) {
-  mediaConnections(first: $first) {
+  query Media($first: Int!, $after: String, $filter: [FilterSelectionInput!],) {
+  mediaConnections(first: $first, after: $after, filter: $filter) {
     edges {
       node {
         id
@@ -90,14 +93,24 @@ const toModel = ({ cursor, node }: MediumEdge): MediumCardProp => ({
   date: node.publication ?? '',
   duration: node.duration ?? NaN,
   thumbnail: new URL(node.thumbnail ?? ''),
-  type: 'Video',
+  type: 'Video'
 });
 
-const MediaViewPanel = () => {
+const MediaGridPanel: React.FC = () => {
+  const searchQuery = useContext(SearchQueryContext);
+  const filerSelectionInput: FilterSelectionInput[] = Object.entries(searchQuery.filterInputs).map(
+    ([filterId, data]) => {
+      const [resources, literals] = mapToWikiDataInput(data);
+      return { filterId, resources, literals };
+    }
+  );
+  console.log('MediaGridPanel:', searchQuery);
+
   const { loading, error, data } = useQuery(GET_MEDIA, {
     variables: {
       first: 10,
-    },
+      filter: filerSelectionInput
+    }
   });
 
   if (loading) return <p>Loading...</p>;
@@ -115,9 +128,8 @@ const MediaViewPanel = () => {
         border: '0px solid red',
         justifyContent: 'center',
         height: 'calc(100vh - 128px)',
-        overflowY: 'scroll',
-      }}
-    >
+        overflowY: 'scroll'
+      }}>
       {data?.mediaConnections?.edges?.flatMap((edge) => {
         return Array(20)
           .fill(0)
@@ -126,18 +138,18 @@ const MediaViewPanel = () => {
     </Grid>
   );
 };
+
 // <MediaViewPanel />
-export const SearchPage: React.FC<SearchPageProps> = (props) => {
+export const SearchPage: React.FC = () => {
   return (
     <Grid
       container
       direction='row'
       size={{ xs: 12 }}
       columnGap={3}
-      sx={{ border: '0px solid black' }}
-    >
+      sx={{ border: '0px solid black' }}>
       <FilterPanel />
-      <MediaViewPanel />
+      <MediaGridPanel />
       <Grid container size={{ xs: 2 }}></Grid>
     </Grid>
   );

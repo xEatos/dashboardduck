@@ -4,30 +4,64 @@ import { MediumCard, MediumCardProp } from './components/MediumCard';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { SearchPage } from './searchpage/SearchPage';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { createContext, useContext, useState } from 'react';
+import { FilterSelectionInput, WikiData } from './__generated__/graphql';
+import { AccordionItem } from './components/AccordionItem';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache()
+});
+
+export interface SearchQueryValues {
+  filterInputs: Record<string, WikiData[]>;
+  freeSolo?: string;
+}
+
+export interface SearchQuery extends SearchQueryValues {
+  updateFilter: (filterId: string, data: WikiData[]) => void;
+  updateFreeSolo: (input: string) => void;
+}
+export const SearchQueryContext = createContext<SearchQuery>({
+  filterInputs: {},
+  updateFilter: (_) => {},
+  updateFreeSolo: (_) => {}
 });
 
 const App = () => {
+  const [searchQuery, setSearchQuery] = useState<SearchQueryValues>({
+    filterInputs: {},
+    freeSolo: undefined
+  });
+
+  const updateFilter = (filterId: string, data: WikiData[]) => {
+    const filterInputs = { ...searchQuery.filterInputs };
+    filterInputs[filterId] = data;
+    setSearchQuery({ ...searchQuery, filterInputs });
+  };
+
+  const updateFreeSolo = (input: string) => {
+    setSearchQuery({ ...searchQuery, freeSolo: input });
+  };
+
   return (
     <ApolloProvider client={client}>
-      <div className='content'>
-        <BNAppBar />
-        <SearchPage filterPanel={<Box>Content</Box>} />
-        <Box
-          sx={{
-            border: '2px solid black',
-            height: '64px',
-            boxSizing: 'border-box',
-          }}
-        >
-          Pagination
-        </Box>
-      </div>
+      <SearchQueryContext.Provider value={{ ...searchQuery, updateFilter, updateFreeSolo }}>
+        <div className='content'>
+          <BNAppBar />
+          <SearchPage />
+          <Box
+            sx={{
+              border: '2px solid black',
+              height: '64px',
+              boxSizing: 'border-box'
+            }}>
+            Pagination
+          </Box>
+        </div>
+      </SearchQueryContext.Provider>
     </ApolloProvider>
   );
 };

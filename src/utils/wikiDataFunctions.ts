@@ -1,6 +1,6 @@
 import { Duration, LocalDate } from "@js-joda/core";
-import { ValueType, WikiData, WikiDataLiteral, WikiDataResource } from "../__generated__/graphql";
-import { ISO639 } from "../utils/iso639";
+import { FilterOption, FilterSelectionInput, ValueType, WikiData, WikiDataLiteral, WikiDataLiteralInput, WikiDataResource, WikiDataResourceInput } from "../__generated__/graphql";
+import { ISO639 } from "./iso639";
 
 export const mapWikiDataToValue = (
   wikiData: WikiData,
@@ -132,4 +132,27 @@ export const wikiDataToStringWithId = (wikiData: WikiData): string => {
   } else {
     return mapWikiDataToValue(wikiData as WikiDataLiteral).toString()
   }
+}
+
+export const mapToWikiData = (selection: FilterSelectionInput): WikiData[] => {
+  return [
+    ...(selection.resources?.map(({ id, label }) => (
+      {__typename: 'WikiDataResource', id, label  }
+    )) ?? []),
+    ...(selection.literals?.map(({ value, type, lang }) => (
+      {__typename: 'WikiDataLiteral', value, type, lang }
+    )) ?? [])
+  ] as WikiData[]
+}
+
+export const mapToWikiDataInput = (wikiDatas: WikiData[]): [WikiDataResourceInput[], WikiDataLiteralInput[]] => {
+  const resources: WikiDataResourceInput[] = []
+  const literals: WikiDataLiteralInput[] = []
+  wikiDatas.forEach((opt) => {
+    switch(opt.__typename){
+      case "WikiDataResource": {resources.push({id: opt.id, label: opt.label}); break; }
+      case "WikiDataLiteral": {literals.push({value: opt.value, type: opt.type, lang: opt.lang}); break; }
+    }
+  })
+  return [resources, literals]
 }
