@@ -44,6 +44,7 @@ export const FitlerGroup: React.FC<FilterGroupProps> = ({ header, filterOptions 
         const dup = existsMoreThanOnce({ filterId, data }, ary, (a, b) => isSame(a.data, b.data));
         return (
           <WikiDataChip
+            key={wikiDataToStringWithId(data) + filterId}
             wikiData={data}
             subLabel={dup ? filterId : undefined}
             height='48px'
