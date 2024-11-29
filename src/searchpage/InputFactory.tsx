@@ -14,7 +14,7 @@ import {
   wikiDataToString,
   wikiDataToStringWithId
 } from '../utils/wikiDataFunctions';
-import { LabelSearchInput, LabelSerachProps } from '../components/inputs/LabelSearchInput';
+import { LabelSearchInput } from '../components/inputs/LabelSearchInput';
 import { WikiDataItem } from '../components/WikiDataItem';
 import Grid from '@mui/material/Grid2';
 import { DateField, LocalizationProvider } from '@mui/x-date-pickers';
@@ -58,7 +58,7 @@ const createDatePicker = (filter: FilterOption): React.ReactNode => (
       sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
       <Typography>{filter.label}:</Typography>
       <LocalizationProvider adapterLocale='de' dateAdapter={AdapterDayjs}>
-        <DateField defaultValue={dayjs(wikiDataToString(filter.options[0]))} />
+        <DateField size='small' defaultValue={dayjs(wikiDataToString(filter.options[0]))} />
       </LocalizationProvider>
     </Grid>
   </Box>

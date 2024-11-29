@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { IconButton } from '@mui/material';
+import { reactoNodeIsEmpty } from '../utils/functions';
 
 export interface AccordionItemProps {
   header: React.ReactNode;
@@ -60,13 +61,28 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '4px',
-          borderBottom: '1px solid grey'
+          borderBottom: open || !reactoNodeIsEmpty(childrenWhenClosed) ? '1px solid grey' : null,
+          backgroundColor: '#f3f3f3',
+          borderRadius:
+            open || !reactoNodeIsEmpty(childrenWhenClosed)
+              ? '8px 8px 0px 0px'
+              : reactoNodeIsEmpty(childrenWhenClosed)
+                ? '8px 8px 8px 8px'
+                : '8px 8px 0px 0px'
         }}>
         {header}
         {open ? <ExpandLess /> : <ExpandMore />}
       </Grid>
       <div style={{ display: open ? 'flex' : 'none', flexDirection: 'column' }}>{children}</div>
-      <div style={{ display: !open ? 'flex' : 'none' }}>{childrenWhenClosed}</div>
+      <div
+        style={{
+          display: !open ? 'flex' : 'none',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          ...(!open && !reactoNodeIsEmpty(childrenWhenClosed) ? { gap: '8px', padding: '8px' } : {})
+        }}>
+        {childrenWhenClosed}
+      </div>
     </Grid>
   );
 };

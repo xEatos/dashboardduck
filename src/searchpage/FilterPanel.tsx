@@ -33,12 +33,16 @@ export const FilterPanel: React.FC = () => {
   const groupedFilterOptions = data ? groupFilterOptionById(data.filterOptions) : undefined;
 
   return (
-    <Grid container direction='column' spacing={2.5}>
+    <Grid container direction='column' spacing={2.5} sx={{ padding: 2 }}>
       {groupedFilterOptions &&
         Object.entries(groupedFilterOptions).map(([header, fopts]) => (
           <FitlerGroup
             key={header}
-            header={<Typography variant='h5'>{header}</Typography>}
+            header={
+              <Typography variant='h6' sx={{ paddingLeft: 0.75 }}>
+                {header}
+              </Typography>
+            }
             filterOptions={fopts}
           />
         ))}

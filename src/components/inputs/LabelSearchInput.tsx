@@ -6,6 +6,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { SearchQueryContext } from '../../App';
 import { mapToWikiData, mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 import { WikiData } from '../../__generated__/graphql';
+import { Height } from '@mui/icons-material';
 
 export interface LabelSerachProps<T> {
   label: React.ReactNode;
@@ -35,7 +36,7 @@ export const LabelSearchInput = <R,>({
   onChange
 }: LabelSerachProps<R>) => {
   return (
-    <Box sx={{ padding: 0.75, margin: '4px 8px 4px 16px' }}>
+    <Box sx={{ padding: 0.75, margin: '2px 4px 2px 8px' }}>
       <Grid container direction='column'>
         <Grid
           container
@@ -45,7 +46,7 @@ export const LabelSearchInput = <R,>({
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
           {label}:
           <Autocomplete
-            sx={{ flexGrow: 1 }}
+            sx={{ flexGrow: 1, minWidth: '250px' }}
             multiple
             value={selectedOptions}
             isOptionEqualToValue={isOptionEqualToValue}
@@ -57,11 +58,11 @@ export const LabelSearchInput = <R,>({
               const isSelected =
                 selectedOptions.find((opt) => isOptionEqualToValue(opt, option)) !== undefined;
               return (
-                <li key={key} {...optionProps}>
+                <li key={key} {...optionProps} style={{ height: '24px', padding: '2px' }}>
                   <Checkbox
                     icon={icon}
                     checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
+                    style={{ marginRight: 4 }}
                     checked={isSelected}
                   />
                   {renderOption(option, isSelected)}
@@ -74,8 +75,8 @@ export const LabelSearchInput = <R,>({
             }}
             renderInput={(params) => (
               <TextField
-                sx={{ flexGrow: 1 }}
                 {...params}
+                size='small'
                 placeholder={`Selected: ${selectedOptions.length}`}
               />
             )}

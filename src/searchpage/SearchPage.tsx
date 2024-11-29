@@ -104,7 +104,6 @@ const MediaGridPanel: React.FC = () => {
       return { filterId, resources, literals };
     }
   );
-  console.log('MediaGridPanel:', searchQuery);
 
   const { loading, error, data } = useQuery(GET_MEDIA, {
     variables: {

@@ -1,11 +1,17 @@
 import React, { Fragment, ReactNode, useContext } from 'react';
-import { FilterOption } from '../__generated__/graphql';
+import { FilterOption, WikiData } from '../__generated__/graphql';
 import { AccordionItem } from '../components/AccordionItem';
 import { SearchQueryContext } from '../App';
 import { filterToInputFactory } from './InputFactory';
 import { WikiDataItem } from '../components/WikiDataItem';
-import { isSame, mapToWikiData, wikiDataToStringWithId } from '../utils/wikiDataFunctions';
-import { Chip } from '@mui/material';
+import {
+  compare,
+  compareWikiData,
+  isSame,
+  wikiDataToStringWithId
+} from '../utils/wikiDataFunctions';
+import { Chip, Typography } from '@mui/material';
+import { existsMoreThanOnce } from '../utils/functions';
 
 export interface FilterGroupProps {
   header: ReactNode;
@@ -16,64 +22,76 @@ export const FitlerGroup: React.FC<FilterGroupProps> = ({ header, filterOptions 
   const query = useContext(SearchQueryContext);
   const selectedOptions = query.filterInputs;
   const filterIds = filterOptions.map((fopt) => fopt.filterId);
+  const selectionWithIds = Object.entries(selectedOptions)
+    .filter(([fId]) => filterIds.includes(fId))
+    .flatMap(([filterId, selection]) => {
+      return selection.map((wikidata) => ({ filterId, data: wikidata }));
+    });
 
   return (
     <AccordionItem
       header={header}
-      children={filterOptions.map((fopt) => (
-        <Fragment key={fopt.filterId}>{filterToInputFactory(fopt)}</Fragment>
+      children={filterOptions.map((fopt, index) => (
+        <div
+          key={fopt.filterId}
+          style={{
+            borderTop: index > 0 ? '1px solid grey' : undefined
+          }}>
+          {filterToInputFactory(fopt)}
+        </div>
       ))}
-      childrenWhenClosed={Object.entries(selectedOptions)
-        .filter(([fId]) => filterIds.includes(fId))
-        .flatMap(([filterId, selection]) => {
-          return selection.map((wikidata) => ({ filterId, data: wikidata }));
-        })
-        .map(({ filterId, data }) => {
-          return (
-            <Chip
-              key={wikiDataToStringWithId(data)}
-              variant='outlined'
-              label={<WikiDataItem {...data} />}
-              onDelete={() => {
-                const newSelection = selectedOptions[filterId].filter(
-                  (otherData) => !isSame(data, otherData)
-                );
-                query.updateFilter(filterId, newSelection);
-              }}
-            />
-          );
-        })}
+      childrenWhenClosed={selectionWithIds.map(({ filterId, data }, index, ary) => {
+        const dup = existsMoreThanOnce({ filterId, data }, ary, (a, b) => isSame(a.data, b.data));
+        return (
+          <WikiDataChip
+            wikiData={data}
+            subLabel={dup ? filterId : undefined}
+            height='48px'
+            onDelete={() => {
+              const newSelection = selectedOptions[filterId].filter(
+                (otherData) => !isSame(data, otherData)
+              );
+              query.updateFilter(filterId, newSelection);
+            }}
+          />
+        );
+      })}
     />
   );
 };
 
-/* 
-<Chip
-  key={getOptionLabel(value)}
-  variant='outlined'
-  label={renderChip(value)}
-  onDelete={() => {
-    const newSelections = selectedOptions.filter((option) => option != value);
-    const [resources, literals] = mapToWikiDataInput(newSelections);
-    queryValues.updateFilter({
-      filterId,
-      literals,
-      resources
-    });
-    //onChange?.(newSelections);
-  }}
-/>
+export interface WikiDataChipProps {
+  wikiData: WikiData;
+  subLabel?: string;
+  onDelete?: () => void;
+  height?: string;
+}
 
-
-Object.entries(selections)
-        .filter(([fId]) => filterIds.includes(fId))
-        .flatMap(([_, selection]) => [
-          ...(selection.resources?.map(({ id, label }) => (
-            <WikiDataItem __typename='WikiDataResource' id={id} label={label} />
-          )) ?? []),
-          ...(selection.literals?.map(({ value, type, lang }) => (
-            <WikiDataItem __typename='WikiDataLiteral' value={value} type={type} lang={lang} />
-          )) ?? [])
-        ])
-
-*/
+export const WikiDataChip: React.FC<WikiDataChipProps> = ({
+  wikiData,
+  subLabel,
+  height,
+  onDelete
+}) => {
+  return (
+    <Chip
+      sx={{ height: height, padding: '2px 4px 2px 4' }}
+      variant='outlined'
+      label={
+        subLabel ? (
+          <span>
+            <WikiDataItem {...wikiData} />
+            {subLabel ? (
+              <Typography variant='body2' sx={{ color: '#606060' }}>
+                {subLabel}
+              </Typography>
+            ) : null}
+          </span>
+        ) : (
+          <WikiDataItem {...wikiData} />
+        )
+      }
+      {...(onDelete ? { onDelete: onDelete } : {})}
+    />
+  );
+};
