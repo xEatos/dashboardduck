@@ -7,7 +7,7 @@ import {
   WikiDataLiteralInput,
   WikiDataResource,
   WikiDataResourceInput
-} from '../__generated__/graphql';
+} from '../../__generated__/graphql';
 import {
   compare,
   compareWikiData,
@@ -15,16 +15,16 @@ import {
   mapWikiDataToValue,
   wikiDataToString,
   wikiDataToStringWithId
-} from '../utils/wikiDataFunctions';
-import { LabelSearchInput } from '../components/inputs/LabelSearchInput';
-import { WikiDataItem } from '../components/WikiDataItem';
+} from '../../utils/wikiDataFunctions';
+import { LabelSearchInput } from '../../components/inputs/LabelSearchInput';
+import { WikiDataItem } from '../../components/WikiDataItem';
 import Grid from '@mui/material/Grid2';
 import { DateField, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/de';
 import React, { useContext } from 'react';
-import { SearchQueryContext } from '../App';
+import { SearchQueryContext } from '../../App';
 
 const createLabelSearchInput = ({ filterId, label, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);

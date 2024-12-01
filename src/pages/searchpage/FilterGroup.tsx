@@ -1,17 +1,17 @@
 import React, { Fragment, ReactNode, useContext } from 'react';
-import { FilterOption, WikiData } from '../__generated__/graphql';
-import { AccordionItem } from '../components/AccordionItem';
-import { SearchQueryContext } from '../App';
+import { FilterOption, WikiData } from '../../__generated__/graphql';
+import { AccordionItem } from '../../components/AccordionItem';
+import { SearchQueryContext } from '../../App';
 import { filterToInputFactory } from './InputFactory';
-import { WikiDataItem } from '../components/WikiDataItem';
+import { WikiDataItem } from '../../components/WikiDataItem';
 import {
   compare,
   compareWikiData,
   isSame,
   wikiDataToStringWithId
-} from '../utils/wikiDataFunctions';
+} from '../../utils/wikiDataFunctions';
 import { Chip, Typography } from '@mui/material';
-import { existsMoreThanOnce } from '../utils/functions';
+import { existsMoreThanOnce } from '../../utils/functions';
 
 export interface FilterGroupProps {
   header: ReactNode;

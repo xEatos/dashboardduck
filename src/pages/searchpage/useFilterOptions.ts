@@ -1,4 +1,4 @@
-import { gql } from "../__generated__";
+import { gql } from "../../__generated__";
 import { useQuery } from '@apollo/client';
 
 const GET_ALL_FILTER_OPTIONS = gql(`

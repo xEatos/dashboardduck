@@ -8,13 +8,13 @@ import {
   WikiData,
   WikiDataLiteral,
   WikiDataResource
-} from '../__generated__/graphql';
-import { MediumCard, MediumCardProp } from '../components/MediumCard';
-import { gql } from '../__generated__';
+} from '../../__generated__/graphql';
+import { MediumCard, MediumCardProp } from '../../components/MediumCard';
+import { gql } from '../../__generated__';
 import { filterToInputFactory } from './InputFactory';
 import { FilterPanel } from './FilterPanel';
-import { SearchQueryContext, SearchQueryValues } from '../App';
-import { mapToWikiDataInput } from '../utils/wikiDataFunctions';
+import { SearchQueryContext, SearchQueryValues } from '../../App';
+import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
