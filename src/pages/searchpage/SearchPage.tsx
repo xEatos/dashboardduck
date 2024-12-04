@@ -19,53 +19,6 @@ import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 export interface SearchPageProps {
   filterPanel: React.JSX.Element;
 }
-/*
-
-const FilterPanel = () => {
-  return (
-    <Grid
-      container
-      size={{ xs: 2 }}
-      sx={{ padding: 1, border: '0px solid blue' }}
-    >
-      <div>
-        {filterToInputFactory({
-          filterId: 'spokenLangauge',
-          filterType: 'LabelSearchInput',
-          label: 'Language',
-          options: Array<WikiData>(
-            {
-              value: 'en',
-              type: 'ISO639',
-              __typename: 'WikiDataLiteral',
-            } as WikiDataLiteral,
-            {
-              value: 'de',
-              type: 'ISO639',
-              __typename: 'WikiDataLiteral',
-            } as WikiDataLiteral,
-            {
-              id: 'https://bnwiki.wikibase.cloud/entity/Q8',
-              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
-              __typename: 'WikiDataResource',
-            } as WikiDataResource,
-            {
-              value: 'fr',
-              type: 'ISO639',
-              __typename: 'WikiDataLiteral',
-            } as WikiDataLiteral,
-            {
-              id: 'https://bnwiki.wikibase.cloud/entity/Q6',
-              label: '32% aller Erwachsenen haben diese Krankheit. Du auch?',
-              __typename: 'WikiDataResource',
-            } as WikiDataResource,
-          ),
-        })}
-      </div>
-    </Grid>
-  );
-};
-*/
 
 const GET_MEDIA = gql(`
   query Media($first: Int!, $after: String, $filter: [FilterSelectionInput!],) {
@@ -153,10 +106,3 @@ export const SearchPage: React.FC = () => {
     </Grid>
   );
 };
-
-function getRandomInteger(min: number, max: number): number {
-  if (min >= max) {
-    throw new Error("The 'min' value must be less than the 'max' value.");
-  }
-  return Math.floor(Math.random() * (max - min) + min);
-}

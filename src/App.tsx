@@ -1,5 +1,5 @@
 import './App.css';
-import { BNAppBar } from './appbar/AppBar';
+import { DashboardAppBar } from './appbar/AppBar';
 import { MediumCard, MediumCardProp } from './components/MediumCard';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
@@ -11,6 +11,7 @@ import { FilterSelectionInput, WikiData } from './__generated__/graphql';
 import { AccordionItem } from './components/AccordionItem';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DetailPage, mediumLoader } from './pages/detailpage/DetailPage';
+import { AppPage } from './AppPage';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -51,7 +52,7 @@ const ActualSearchPage: React.FC = () => {
   return (
     <SearchQueryContext.Provider value={{ ...searchQuery, updateFilter, updateFreeSolo }}>
       <div className='content'>
-        <BNAppBar />
+        <DashboardAppBar />
         <SearchPage />
         <Box
           sx={{
@@ -73,7 +74,7 @@ const ErrorPage = () => {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <ActualSearchPage />,
+    element: <AppPage />,
     errorElement: <ErrorPage />
   },
   {

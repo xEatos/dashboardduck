@@ -4,7 +4,7 @@ import AppsIcon from '@mui/icons-material/Apps';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { SearchInput } from './SearchInput';
 
-export const BNAppBar: React.FC = () => {
+export const DashboardAppBar: React.FC = () => {
   return (
     <AppBar position='sticky'>
       <Toolbar>
