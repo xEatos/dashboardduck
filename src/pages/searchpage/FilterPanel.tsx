@@ -1,13 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import {
-  FilterOption,
-  FilterOptionsQuery,
-  FilterSelectionInput
-} from '../../__generated__/graphql';
+import React from 'react';
+import { FilterOption } from '../../__generated__/graphql';
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useFilterOptions } from './useFilterOptions';
 import { FitlerGroup } from './FilterGroup';
+import { useGetMediaFilters } from '../../queries/useGetMediaFilters';
 
 export interface FilterPanelProps {
   filters: FilterOption[];
@@ -28,13 +24,9 @@ const groupFilterOptionById = (filterOpts: FilterOption[]): FilterOptionGroup =>
 };
 
 export const FilterPanel: React.FC = () => {
-  const { loading, error, data } = useFilterOptions();
+  const data = useGetMediaFilters();
 
-  if (loading) return <p>Loading...</p>;
-
-  if (error) return <p>Error : {error.message}</p>;
-
-  const groupedFilterOptions = data ? groupFilterOptionById(data.filterOptions) : undefined;
+  const groupedFilterOptions = groupFilterOptionById(data);
 
   return (
     <Grid container direction='column' spacing={2.5} sx={{ padding: 2 }}>

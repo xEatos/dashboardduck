@@ -1,5 +1,6 @@
-import { gql } from "../../__generated__";
-import { useQuery } from '@apollo/client';
+import { useSuspenseQuery } from '@apollo/client';
+import { FilterOptionsQuery } from '../__generated__/graphql';
+import { gql } from '../__generated__';
 
 const GET_ALL_FILTER_OPTIONS = gql(`
   query FilterOptions {
@@ -25,7 +26,7 @@ const GET_ALL_FILTER_OPTIONS = gql(`
 }
 `);
 
-export const useFilterOptions = () => {
-  const { loading, error, data } = useQuery(GET_ALL_FILTER_OPTIONS);
-  return { loading, error, data }
-}
+export const useGetMediaFilters = () => {
+  const { data } = useSuspenseQuery<FilterOptionsQuery>(GET_ALL_FILTER_OPTIONS);
+  return data.filterOptions;
+};

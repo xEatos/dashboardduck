@@ -1,13 +1,5 @@
-import { Box, Checkbox, FormControlLabel, Paper, Slider, Typography } from '@mui/material';
-import {
-  FilterOption,
-  ValueType,
-  WikiData,
-  WikiDataLiteral,
-  WikiDataLiteralInput,
-  WikiDataResource,
-  WikiDataResourceInput
-} from '../../__generated__/graphql';
+import { Box, Checkbox, FormControlLabel, Slider, Typography } from '@mui/material';
+import { FilterOption, ValueType, WikiData } from '../../__generated__/graphql';
 import {
   compare,
   compareWikiData,
@@ -24,7 +16,7 @@ import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/de';
 import React, { useContext } from 'react';
-import { SearchQueryContext } from '../../App';
+import { SearchQueryContext } from './SearchPage';
 
 const createLabelSearchInput = ({ filterId, label, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);

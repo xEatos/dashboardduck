@@ -1,108 +1,139 @@
 import { useQuery } from '@apollo/client';
 import Grid from '@mui/material/Grid2';
-import React, { PropsWithChildren, useContext } from 'react';
+import React, { createContext, Suspense, useContext, useEffect, useState } from 'react';
 import {
   FilterSelectionInput,
-  MediaQuery,
   MediumEdge,
+  ValueType,
   WikiData,
-  WikiDataLiteral,
-  WikiDataResource
+  WikiDataLiteral
 } from '../../__generated__/graphql';
 import { MediumCard, MediumCardProp } from '../../components/MediumCard';
 import { gql } from '../../__generated__';
-import { filterToInputFactory } from './InputFactory';
 import { FilterPanel } from './FilterPanel';
-import { SearchQueryContext, SearchQueryValues } from '../../App';
-import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
+import {
+  mapToWikiDataInput,
+  mapURLValueToWikidata,
+  mapWikiDataToURLValue,
+  tryCastToWikiDataLiteral
+} from '../../utils/wikiDataFunctions';
+import { LoaderFunction, Path, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { MediaGridPanel } from './MediaGridPanel';
 
-export interface SearchPageProps {
-  filterPanel: React.JSX.Element;
+export interface SearchQueryValues {
+  filterInputs: Record<string, WikiData[]>;
+  freeSolo?: WikiDataLiteral;
 }
 
-const GET_MEDIA = gql(`
-  query Media($first: Int!, $after: String, $filter: [FilterSelectionInput!],) {
-  mediaConnections(first: $first, after: $after, filter: $filter) {
-    edges {
-      node {
-        id
-        title
-        thumbnail
-        publication
-        duration
-        channel
-      }
-      cursor
-    }
-  }
+export interface SearchQuery extends SearchQueryValues {
+  updateFilter: (filterId: string, data: WikiData[]) => void;
+  updateFreeSolo: (input: string) => void;
 }
-`);
-
-const toModel = ({ cursor, node }: MediumEdge): MediumCardProp => ({
-  id: node.id,
-  cursor: cursor,
-  title: node.title ?? '',
-  channel: node.channel ?? '',
-  date: node.publication ?? '',
-  duration: node.duration ?? NaN,
-  thumbnail: new URL(node.thumbnail ?? ''),
-  type: 'Video'
+export const SearchQueryContext = createContext<SearchQuery>({
+  filterInputs: {},
+  updateFilter: (_) => {},
+  updateFreeSolo: (_) => {}
 });
 
-const MediaGridPanel: React.FC = () => {
-  const searchQuery = useContext(SearchQueryContext);
-  const filerSelectionInput: FilterSelectionInput[] = Object.entries(searchQuery.filterInputs).map(
-    ([filterId, data]) => {
-      const [resources, literals] = mapToWikiDataInput(data);
-      return { filterId, resources, literals };
-    }
-  );
+export interface SearchLoaderData {
+  params: { search: string };
+}
 
-  const { loading, error, data } = useQuery(GET_MEDIA, {
-    variables: {
-      first: 10,
-      filter: filerSelectionInput
-    }
-  });
-
-  if (loading) return <p>Loading...</p>;
-
-  if (error) return <p>Error : {error.message}</p>;
-
-  return (
-    <Grid
-      container
-      size={{ xs: 8 }}
-      gap={2}
-      spacing={2}
-      sx={{
-        padding: 1,
-        border: '0px solid red',
-        justifyContent: 'center',
-        height: 'calc(100vh - 128px)',
-        overflowY: 'scroll'
-      }}>
-      {data?.mediaConnections?.edges?.flatMap((edge) => {
-        return Array(20)
-          .fill(0)
-          .map((_, index) => <MediumCard key={index} {...toModel(edge)} />);
-      })}
-    </Grid>
-  );
+export const searchLoader: LoaderFunction<SearchLoaderData> = (context): Partial<Path> => {
+  const url = new URL(context.request.url);
+  return {
+    pathname: url.pathname,
+    search: url.search
+  };
 };
 
-// <MediaViewPanel />
+const mapPathToSearchQueryValues = ({ search }: Partial<Path>): SearchQueryValues => {
+  const textFilterId = 'Text';
+  if (search) {
+    const param: Record<string, WikiData[]> = {};
+    const paramList = search
+      .slice(1)
+      .split('&')
+      .map((idWithValues) => {
+        const idWithValueList = idWithValues.split('=');
+        return {
+          filterId: idWithValueList[0],
+          values: idWithValueList[1].split('|').map((value) => mapURLValueToWikidata(value))
+        };
+      });
+    paramList.forEach((p) => {
+      if (p.filterId !== textFilterId) {
+        param[p.filterId] = p.values;
+      }
+    });
+    return {
+      filterInputs: param,
+      freeSolo: param[textFilterId]?.[0]
+        ? tryCastToWikiDataLiteral(param[textFilterId][0])
+        : undefined
+    };
+  } else {
+    return {
+      filterInputs: {},
+      freeSolo: undefined
+    };
+  }
+};
+
+const mapSearchQueryValuesToPath = ({
+  filterInputs,
+  freeSolo
+}: SearchQueryValues): Partial<Path> => {
+  const enCodedfreeSolo =
+    freeSolo && freeSolo.value.length > 0 ? encodeURIComponent(`Text=${freeSolo}&`) : '';
+  const path: Partial<Path> = {
+    search:
+      enCodedfreeSolo +
+      Object.entries(filterInputs)
+        .map(([fid, values]) =>
+          values.length > 0 ? `${fid}=${values.map(mapWikiDataToURLValue).join('|')}` : undefined
+        )
+        .filter((s) => s)
+        .join('&')
+  };
+  return path;
+};
+
 export const SearchPage: React.FC = () => {
+  const urlSearchParams = useLoaderData<Partial<Path>>();
+  const navigate = useNavigate();
+
+  const queryValues: SearchQueryValues = mapPathToSearchQueryValues(urlSearchParams);
+
+  const updateFilter = (filterId: string, data: WikiData[]) => {
+    const newQueryValues: SearchQueryValues = {
+      filterInputs: { ...queryValues.filterInputs },
+      freeSolo: queryValues.freeSolo
+    };
+    newQueryValues.filterInputs[filterId] = data;
+    navigate(mapSearchQueryValuesToPath(newQueryValues));
+  };
+
+  const updateFreeSolo = (value: string) => {
+    queryValues.freeSolo = { __typename: 'WikiDataLiteral', type: ValueType.String, value };
+    navigate(mapSearchQueryValuesToPath(queryValues));
+  };
+
   return (
-    <Grid
-      container
-      direction='row'
-      size={{ xs: 12 }}
-      columnGap={3}
-      sx={{ border: '0px solid black' }}>
-      <FilterPanel />
-      <MediaGridPanel />
-      <Grid container size={{ xs: 2 }}></Grid>
-    </Grid>
+    <SearchQueryContext.Provider value={{ ...queryValues, updateFilter, updateFreeSolo }}>
+      <Grid
+        container
+        direction='row'
+        wrap='nowrap'
+        size={{ xs: 12 }}
+        columnGap={3}
+        sx={{ border: '0px solid black' }}>
+        <Suspense fallback={<p>loading filters</p>}>
+          <FilterPanel />
+        </Suspense>
+        <MediaGridPanel />
+        <Grid container size={{ xs: 2 }}></Grid>
+      </Grid>
+    </SearchQueryContext.Provider>
   );
 };
