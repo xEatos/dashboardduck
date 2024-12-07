@@ -1,5 +1,5 @@
-import { Suspense, useDeferredValue, useEffect, useState } from 'react';
-import { LoaderFunction, Path, useLocation, useNavigate } from 'react-router-dom';
+import { Suspense, useDeferredValue, useState } from 'react';
+import { LoaderFunction, Path } from 'react-router-dom';
 import { useGetMedia } from '../../queries/useGetMedia';
 
 export const testLoader: LoaderFunction = (context): Partial<Path> => {
@@ -10,22 +10,14 @@ export const testLoader: LoaderFunction = (context): Partial<Path> => {
   };
 };
 
-interface Album {
-  id: number;
-  title: string;
-  year: number;
-}
-
 // https://react.dev/reference/react/useTransition
 
-export const SearchResults: React.FC<{ query: string }> = ({ query }) => {
+export const TestSearchResult: React.FC<{ query: string; first: number }> = ({ query, first }) => {
   if (query === '') {
     return null;
   }
 
-  const result = useGetMedia(10, '0', []);
-  const deferredQuery = useDeferredValue(result);
-  const isStale = result[0].title !== deferredQuery[0].title;
+  const result = useGetMedia(first, '0', []);
 
   if (result.length === 0) {
     return (
@@ -35,140 +27,44 @@ export const SearchResults: React.FC<{ query: string }> = ({ query }) => {
     );
   }
   return (
-    <div
-      style={{
-        opacity: isStale ? 0.5 : 1
-      }}>
-      <ul>
-        {result.map((medium, index) => (
-          <li key={index}>{medium.title}</li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {result.map((medium, index) => (
+        <li key={index}>{medium.title}</li>
+      ))}
+    </ul>
   );
 };
 
 export const TestPage: React.FC = () => {
-  //const currentLocation = useLocation();
-  const [query, setQuery] = useState<string>('');
-  const deferredQuery = useDeferredValue(query);
-  const isStale = query !== deferredQuery;
+  const [queryAmount, setQueryAmount] = useState({
+    amount: Math.ceil((Math.random() + 1) * 100),
+    query: ''
+  });
+  const deferredQueryAmount = useDeferredValue(queryAmount);
+  const isStale =
+    queryAmount.amount !== deferredQueryAmount.amount ||
+    queryAmount.query !== deferredQueryAmount.query;
   console.log('isStale', isStale);
 
-  const nextURL = 'http://localhost:3000/test';
-  const nextTitle = 'My new page title';
-  const nextState = { additionalInformation: 'Updated the URL with JS' };
-
-  /*
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isStale) {
-      navigate({ search: query });
-    }
-  }, [query, isStale]);
-*/
   return (
     <div>
       <label>
         Search albums:
         <input
-          value={query}
+          value={queryAmount.query}
           onChange={(e) => {
-            setQuery(e.target.value);
+            setQueryAmount({ query: e.target.value, amount: Math.ceil((Math.random() + 1) * 100) });
           }}
         />
       </label>
-      <button
-        onClick={() => {
-          window.history.pushState(nextURL + query, nextTitle, nextURL + query);
-        }}>
-        Bal
-      </button>
       <Suspense fallback={<h2>Loading...</h2>}>
         <div
           style={{
             opacity: isStale ? 0.5 : 1
           }}>
-          <SearchResults query={deferredQuery} />
+          <TestSearchResult query={deferredQueryAmount.query} first={deferredQueryAmount.amount} />
         </div>
       </Suspense>
     </div>
   );
 };
-
-function getSearchResults(query: string) {
-  const allAlbums = [
-    {
-      id: 13,
-      title: 'Let It Be',
-      year: 1970
-    },
-    {
-      id: 12,
-      title: 'Abbey Road',
-      year: 1969
-    },
-    {
-      id: 11,
-      title: 'Yellow Submarine',
-      year: 1969
-    },
-    {
-      id: 10,
-      title: 'The Beatles',
-      year: 1968
-    },
-    {
-      id: 9,
-      title: 'Magical Mystery Tour',
-      year: 1967
-    },
-    {
-      id: 8,
-      title: "Sgt. Pepper's Lonely Hearts Club Band",
-      year: 1967
-    },
-    {
-      id: 7,
-      title: 'Revolver',
-      year: 1966
-    },
-    {
-      id: 6,
-      title: 'Rubber Soul',
-      year: 1965
-    },
-    {
-      id: 5,
-      title: 'Help!',
-      year: 1965
-    },
-    {
-      id: 4,
-      title: 'Beatles For Sale',
-      year: 1964
-    },
-    {
-      id: 3,
-      title: "A Hard Day's Night",
-      year: 1964
-    },
-    {
-      id: 2,
-      title: 'With The Beatles',
-      year: 1963
-    },
-    {
-      id: 1,
-      title: 'Please Please Me',
-      year: 1963
-    }
-  ];
-
-  const lowerQuery = query.trim().toLowerCase();
-  return allAlbums.filter((album) => {
-    const lowerTitle = album.title.toLowerCase();
-    return lowerTitle.startsWith(lowerQuery) || lowerTitle.indexOf(' ' + lowerQuery) !== -1;
-  });
-}

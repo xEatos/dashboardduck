@@ -11,8 +11,8 @@ import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
 
 const pagePathWithIcons = [
   { label: 'Search', path: 'search', icon: <SearchOutlinedIcon fontSize='large' /> },
-  { label: 'Import', path: 'import', icon: <ImportExportOutlinedIcon fontSize='large' /> },
-  { label: 'TestPage', path: 'test', icon: <BugReportOutlinedIcon fontSize='large' /> }
+  { label: 'Import', path: 'import', icon: <ImportExportOutlinedIcon fontSize='large' /> }
+  //{ label: 'TestPage', path: 'test', icon: <BugReportOutlinedIcon fontSize='large' /> }
 ];
 
 const drawerWidthOpen = 240;

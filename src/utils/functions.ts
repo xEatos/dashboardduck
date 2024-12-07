@@ -59,3 +59,25 @@ export const splitAtLast = (str: string, sequence: string): [left: string, right
   }
   return [str.slice(0, latestMatchedIndex), str.slice(latestMatchedIndex + sequence.length)];
 };
+
+interface ListLike<T> {
+  [index: number]: T;
+  readonly length: number;
+}
+
+export const convertDownLevelIteration = <T>(list: ListLike<T>): Array<T> => {
+  const array = new Array<T>(list.length);
+  for (let i = 0; i < list.length; ++i) {
+    array[i] = list[i];
+  }
+  return array;
+};
+
+export const union = <T>(
+  setA: Array<T>,
+  setB: Array<T>,
+  equals?: (a: T, b: T) => Boolean
+): Array<T> => {
+  const eq = equals ?? ((a: T, b: T) => a === b);
+  return setA.filter((a) => !setB.find((b) => eq(a, b))).concat(setB);
+};

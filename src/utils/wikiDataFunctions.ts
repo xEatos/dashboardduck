@@ -1,4 +1,4 @@
-import { Duration, LocalDate } from '@js-joda/core';
+import { LocalDate } from '@js-joda/core';
 import {
   FilterSelectionInput,
   ValueType,
@@ -10,6 +10,7 @@ import {
 } from '../__generated__/graphql';
 import { ISO639 } from './iso639';
 import { splitAtLast, splitAtNth } from './functions';
+import { Duration } from './duration';
 
 export const mapWikiDataToValue = (
   wikiData: WikiData
@@ -26,7 +27,7 @@ export const mapWikiDataToValue = (
       case ValueType.Number:
         return Number(wikiLiteral.value);
       case ValueType.Duration:
-        return Duration.parse(wikiLiteral.value);
+        return Duration.of(wikiLiteral.value);
       case ValueType.Iso639:
         return ISO639.of(wikiLiteral.value)!;
       default:
@@ -38,7 +39,6 @@ export const mapWikiDataToValue = (
 const isString = (value: unknown): value is string => typeof value === 'string';
 const isNumber = (value: unknown): value is number => typeof value === 'number';
 const isISO639 = (value: unknown): value is ISO639 => value instanceof ISO639;
-const isDuration = (value: unknown): value is Duration => value instanceof Duration;
 const isDate = (value: unknown): value is LocalDate => value instanceof LocalDate;
 
 export const compare = (equal: boolean, negative: boolean): 1 | 0 | -1 => {
@@ -72,7 +72,7 @@ const compareLiteral = (a: WikiDataLiteral, b: WikiDataLiteral): 1 | 0 | -1 => {
     return compareNumber(valueA, valueB);
   } else if (isISO639(valueA) && isISO639(valueB)) {
     return compareISO639(valueA, valueB);
-  } else if (isDuration(valueA) && isDuration(valueB)) {
+  } else if (Duration.isDuration(valueA) && Duration.isDuration(valueB)) {
     return compareDuration(valueA, valueB);
   } else if (isDate(valueA) && isDate(valueB)) {
     return compareDate(valueA, valueB);
@@ -92,7 +92,8 @@ const compareNumber = (a: number, b: number): 1 | 0 | -1 => compare(a === b, a <
 
 const compareISO639 = (a: ISO639, b: ISO639) => compareString(a.id, b.id);
 
-const compareDuration = (a: Duration, b: Duration) => compareNumber(a.seconds(), b.seconds());
+// TODO make own class SecDuration then overwrite toString
+const compareDuration = (a: Duration, b: Duration) => a.compare(b);
 
 export const compareWikiData = (a: WikiData, b: WikiData): 1 | 0 | -1 => {
   if (

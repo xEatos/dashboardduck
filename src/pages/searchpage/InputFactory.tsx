@@ -4,25 +4,24 @@ import {
   compare,
   compareWikiData,
   isSame,
-  mapWikiDataToValue,
-  wikiDataToString,
+  tryCastToWikiDataLiteral,
   wikiDataToStringWithId
 } from '../../utils/wikiDataFunctions';
 import { LabelSearchInput } from '../../components/inputs/LabelSearchInput';
 import { WikiDataItem } from '../../components/WikiDataItem';
-import Grid from '@mui/material/Grid2';
-import { DateField, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/de';
 import React, { useContext } from 'react';
 import { SearchQueryContext } from './SearchPage';
+import { DateInput } from '../../components/inputs/DateInput';
+import { ValueRangeInput } from '../../components/inputs/ValueRangeInput';
+import { convertDuration } from '../../utils/duration';
 
 const createLabelSearchInput = ({ filterId, label, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);
 
   return (
-    <LabelSearchInput<WikiData>
+    <LabelSearchInput
       key={filterId}
       label={label}
       options={[...options]}
@@ -42,21 +41,26 @@ const createLabelSearchInput = ({ filterId, label, options }: FilterOption): Rea
   );
 };
 
-const createDatePicker = (filter: FilterOption): React.ReactNode => (
-  <Box sx={{ padding: 0.75, margin: '4px 8px 4px 16px' }}>
-    <Grid
-      container
-      direction='row'
-      wrap='nowrap'
-      spacing={2}
-      sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography>{filter.label}:</Typography>
-      <LocalizationProvider adapterLocale='de' dateAdapter={AdapterDayjs}>
-        <DateField size='small' defaultValue={dayjs(wikiDataToString(filter.options[0]))} />
-      </LocalizationProvider>
-    </Grid>
-  </Box>
-);
+const createDatePicker = ({ filterId, label, options }: FilterOption): React.ReactNode => {
+  const query = useContext(SearchQueryContext);
+  return (
+    <DateInput
+      label={label}
+      locale={'de'}
+      value={query.filterInputs[filterId]?.[0] ?? options[0]}
+      valueToDate={(v) => dayjs(tryCastToWikiDataLiteral(v)?.value)}
+      onChange={(date) => {
+        console.log(!Number.isNaN(date.valueOf));
+        if (!Number.isNaN(date.valueOf)) {
+          console.log(date.toISOString());
+          query.updateFilter(filterId, [
+            { __typename: 'WikiDataLiteral', type: ValueType.Date, value: date.toISOString() }
+          ]);
+        }
+      }}
+    />
+  );
+};
 
 const createCheckBox = (filter: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);
@@ -85,26 +89,39 @@ const createCheckBox = (filter: FilterOption): React.ReactNode => {
   );
 };
 
-const createValueSlider = (filter: FilterOption): React.ReactNode => {
+const createValueSlider = ({ filterId, label, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);
-
-  const [value, setValue] = React.useState<number[]>([
-    mapWikiDataToValue(filter.options[0]) as number,
-    1000
-  ]);
-
-  const handleChange = (event: Event, newValue: number | number[]) => {
-    setValue(newValue as number[]);
+  const opt2 = tryCastToWikiDataLiteral(options[0]);
+  const zero: WikiData = {
+    __typename: 'WikiDataLiteral',
+    type: ValueType.Duration,
+    value: '0'
   };
 
   return (
-    <Box sx={{ width: '300px', padding: '4px 2px 2px 14px' }}>
-      <Grid container direction='row' wrap='nowrap' spacing={2}>
-        <Typography>{value[0]}</Typography>
-        <Slider value={value} disableSwap min={0} max={1200} onChange={handleChange} />
-        <Typography>{value[1]}</Typography>
-      </Grid>
-    </Box>
+    <ValueRangeInput
+      disableSwap={true}
+      min={zero}
+      max={options[1]}
+      minValue={query.filterInputs[filterId]?.[0] ?? zero}
+      maxValue={query.filterInputs[filterId]?.[1] ?? options[1]}
+      valueToNumber={(v) => Number(tryCastToWikiDataLiteral(v)?.value) ?? 0}
+      numberToValue={(v) => {
+        const a: WikiData = {
+          __typename: 'WikiDataLiteral',
+          value: v.toString(),
+          type: opt2?.type ?? ValueType.Number
+        };
+        return a;
+      }}
+      valueToLabel={(v) => {
+        const num = Number(tryCastToWikiDataLiteral(v)?.value) ?? 0;
+        return convertDuration(num);
+      }}
+      onChange={(min, max) => {
+        query.updateFilter(filterId, [min, max]);
+      }}
+    />
   );
 };
 

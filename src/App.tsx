@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DetailPage, mediumLoader } from './pages/detailpage/DetailPage';
 import { AppPage } from './AppPage';
 import { TestPage } from './pages/testpage/TestPage';
+import { ImportPage } from './pages/importpage/ImportPage';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -28,11 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'import',
-        element: <div>Empty</div>
-      },
-      {
-        path: 'test',
-        element: <TestPage />
+        element: <ImportPage />
       }
     ]
   },

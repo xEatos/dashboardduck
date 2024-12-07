@@ -1,12 +1,11 @@
-import React, { PropsWithChildren, Suspense, useContext, useDeferredValue } from 'react';
+import React, { PropsWithChildren, Suspense, useContext } from 'react';
 import { Medium, useGetMedia } from '../../queries/useGetMedia';
 import { SearchQueryContext } from './SearchPage';
 import { FilterSelectionInput, ValueType } from '../../__generated__/graphql';
-import { isSame, isSameWithUndef, mapToWikiDataInput } from '../../utils/wikiDataFunctions';
+import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 import { MediumCard } from '../../components/MediumCard';
 import Grid from '@mui/material/Grid2';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Box, styled } from '@mui/material';
 
 export interface MediaGridProps {
   media: Medium[];
@@ -46,7 +45,6 @@ const MediaGridWrapper: React.FC<{
 
 export const MediaGridPanel: React.FC = () => {
   const searchQuery = useContext(SearchQueryContext);
-  //const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const filerSelectionInput: FilterSelectionInput[] = Object.entries(searchQuery.filterInputs).map(
     ([filterId, data]) => {
@@ -62,35 +60,11 @@ export const MediaGridPanel: React.FC = () => {
     });
   }
 
-  //const isPending = deferredSearchQuery.freeSolo?.value !== searchQuery.freeSolo?.value;
-  /*
-  const isPending = isSameWithUndef(
-    deferredSearchQuery.filterInputs['MediumTyp']?.[0],
-    searchQuery.filterInputs['MediumTyp']?.[0]
-  );
-  */
-
   return (
     <ErrorBoundary fallback={<p>Error to retrieve Media</p>}>
       <Suspense fallback={<p>Skeleton</p>}>
-        <PendingLayout isPending={false}></PendingLayout>
         <MediaGridWrapper first={50} after='0' fiterInput={filerSelectionInput} />
       </Suspense>
     </ErrorBoundary>
   );
 };
-
-const PendingLayout: React.FC<PropsWithChildren<{ isPending: boolean }>> = ({
-  isPending,
-  children
-}) => (
-  <div
-    style={{
-      backgroundColor: 'red',
-      opacity: isPending ? 1 : 0.2,
-      width: '100px',
-      height: '100px'
-    }}>
-    {children}
-  </div>
-);

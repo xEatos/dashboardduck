@@ -1,12 +1,8 @@
-import { Autocomplete, Box, Checkbox, Chip, Paper, TextField, Typography } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import { Autocomplete, Box, Checkbox, Chip, TextField } from '@mui/material';
+import React from 'react';
 import Grid from '@mui/material/Grid2';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { SearchQueryContext } from '../../App';
-import { mapToWikiData, mapToWikiDataInput } from '../../utils/wikiDataFunctions';
-import { WikiData } from '../../__generated__/graphql';
-import { Height } from '@mui/icons-material';
 
 export interface LabelSerachProps<T> {
   label: React.ReactNode;
