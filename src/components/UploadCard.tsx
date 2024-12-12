@@ -11,7 +11,7 @@ import {
   styled,
   Typography
 } from '@mui/material';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { convertDownLevelIteration, union } from '../utils/functions';
 
 type UploadContentProps = {
@@ -62,19 +62,22 @@ export interface UploadCardProps {
   maxFiles: number;
 }
 
-export const UploadCard = () => {
+export const UploadCard: React.FC<UploadCardProps> = (props) => {
   const [files, setFiles] = useState<Array<File>>([]);
+
+  useEffect(() => {
+    props.onChange(files);
+  }, [files]);
 
   const handleOnFilesSelected = (otherFiles: FileList) => {
     const csvFiles = convertDownLevelIteration(otherFiles).filter(
-      (file) => file.type === 'text/csv'
+      (file) => file.type === 'application/json'
     );
-    console.log(csvFiles);
     setFiles(union(csvFiles, files, (a, b) => a.name === b.name));
   };
 
   return (
-    <Card variant='elevation' sx={{ minWidth: 450, margin: 2 }}>
+    <Card variant='elevation' sx={{ minWidth: 450, maxWidth: 450, margin: 2 }}>
       <CardContent
         sx={{
           border: '1px solid grey',
@@ -108,7 +111,7 @@ export const UploadCard = () => {
           Select files
           <VisuallyHiddenInput
             type='file'
-            accept='text/csv'
+            accept='application/json'
             onChange={(event) => {
               handleOnFilesSelected(event.target.files ?? new FileList());
             }}
@@ -123,7 +126,7 @@ export const UploadCard = () => {
             <UploadContent
               key={file.name}
               file={file}
-              success
+              success // if not successfull show error
               onHandleRemove={(fileToRemove: File) => {
                 setFiles(files.filter((f) => f.name !== fileToRemove.name));
               }}

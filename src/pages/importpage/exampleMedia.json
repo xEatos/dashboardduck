@@ -1,0 +1,45 @@
+{
+  "media":[
+    {
+      "type":"Video",
+      "title": "32% aller Erwachsenen haben diese Krankheit. Du auch?",
+      "publicationDate":"2023-11-19",
+      "language":"de",
+      "thumbnailURL":"https://i.ytimg.com/vi_webp/FuV3ysSKOsw/maxresdefault.webp",
+      "reference":{
+        "URL":"https://www.youtube.com/watch?v=FuV3ysSKOsw",
+        "publishedBy":"Doktor Whatson",
+        "hostedBy":"YouTube"
+      },
+      "category":[
+        "Medicine",
+        "Gastroenterology"
+      ],
+      "transcript":[
+        {
+          "language":"de",
+          "sections":[
+            {
+              "heading":"Eine verbreitete Krankheit",
+              "startTimestamp":"0",
+              "endTimestamp":"76",
+              "text":"Die Krankheit, über die wir heute sprechen, ..."
+            },
+            {
+              "heading":"Was begünstigt diese Krankheit?",
+              "startTimestamp":"76",
+              "endTimestamp":"170",
+              "text":"Wie und bei wem entwickelt sie sich? Wichtige ..."
+            }
+          ]
+        }
+      ],
+      "subtitleLanguage":[
+        "de",
+        "en"
+      ],
+      "duration":"787"
+    }
+  ]
+}
+
