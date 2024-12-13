@@ -231,21 +231,24 @@ export const importMediaSchema: JsonProperty = {
 class ValidateProperty {
   value: any;
   schema: JsonProperty;
+  logger: Logger;
 
-  private constructor(value: any, schema: JsonProperty) {
+  private constructor(value: any, schema: JsonProperty, logger: Logger) {
     this.value = value;
     this.schema = schema;
+    this.logger = logger;
   }
 
-  static of(obj: any, schema: JsonProperty) {
-    return new ValidateProperty(obj, schema);
+  static of(obj: any, schema: JsonProperty, logger: Logger) {
+    return new ValidateProperty(obj, schema, logger);
   }
 
   isValid(): boolean {
-    console.log('value:', this.value, 'schema:', this.schema);
     const res = this.schema.isValidValue(this.value);
     if (res instanceof ParseError) {
-      console.log(res.reason);
+      this.logger.log(
+        `Value "${this.value}" for the schema: ${this.schema}. Reason: ${res.reason}`
+      );
       return false;
     } else {
       return true;
@@ -253,31 +256,30 @@ class ValidateProperty {
   }
 }
 
-// todo log errors
-// todo add auto injections
-
 export class ValidateObject {
   obj: Record<string, any>;
   schemas: JsonProperty[];
+  logger: Logger;
 
-  private constructor(obj: Object, schema: JsonProperty[]) {
+  private constructor(obj: Object, schema: JsonProperty[], logger?: Logger) {
     this.obj = obj;
     this.schemas = schema;
+    this.logger = logger ?? new ErrorLogger(self.crypto.randomUUID());
   }
 
-  static of(obj: Record<string, any>, schema: JsonProperty[]) {
-    return new ValidateObject(obj, schema);
+  static of(obj: Record<string, any>, schema: JsonProperty[], logger?: Logger) {
+    return new ValidateObject(obj, schema, logger);
   }
 
   private isValidCheckObject(value: any, schemas: JsonProperty[]): boolean {
     if (Array.isArray(value)) {
       const res = value.reduce(
-        (accu: boolean, v) => accu && ValidateObject.of(v, schemas).isValid(),
+        (accu: boolean, v) => ValidateObject.of(v, schemas, this.logger).isValid() && accu,
         true
       );
       return res;
     } else {
-      const res = ValidateObject.of(value, schemas).isValid();
+      const res = ValidateObject.of(value, schemas, this.logger).isValid();
       return res;
     }
   }
@@ -285,12 +287,12 @@ export class ValidateObject {
   private isValidCheckValue(value: any, schema: JsonProperty): boolean {
     if (Array.isArray(value)) {
       const res = value.reduce(
-        (accu: boolean, v) => accu && ValidateProperty.of(v, schema).isValid(),
+        (accu: boolean, v) => ValidateProperty.of(v, schema, this.logger).isValid() && accu,
         true
       );
       return res;
     } else {
-      const res = ValidateProperty.of(value, schema).isValid();
+      const res = ValidateProperty.of(value, schema, this.logger).isValid();
       return res;
     }
   }
@@ -299,7 +301,9 @@ export class ValidateObject {
     if (schema.children !== undefined) {
       const validObject = schema.isValidValue(value);
       if (validObject instanceof ParseError) {
-        console.log(validObject.reason);
+        this.logger.log(
+          `Value "${value}" for the schema: ${schema}. Reason: ${validObject.reason}`
+        );
         return false;
       } else {
         return this.isValidCheckObject(value, schema.children);
@@ -310,14 +314,11 @@ export class ValidateObject {
   }
 
   isValid(): boolean {
-    console.log('obj:', this.obj, 'schema:', this.schemas);
-
     const valid = this.schemas.reduce((accu: boolean, schema) => {
       const value: any = this.obj[schema.label];
-      console.log('schema.label:', schema.label, ' - value by schema label: ', value);
 
       if (value !== undefined) {
-        return accu && this.isValidCheck(value, schema);
+        return this.isValidCheck(value, schema) && accu;
       } else {
         return schema.isRequired ? false : true;
       }
@@ -327,4 +328,25 @@ export class ValidateObject {
   }
 }
 
-class ErrorLogger {}
+export const logger = new Map<string, Logger>();
+
+interface Logger {
+  log(msg: string): void;
+  get(): string[];
+}
+
+export class ErrorLogger implements Logger {
+  logs: string[] = [];
+
+  constructor(id: string) {
+    logger.set(id, this);
+  }
+
+  log(msg: string): void {
+    this.logs.push(msg);
+  }
+
+  get(): string[] {
+    return this.logs;
+  }
+}

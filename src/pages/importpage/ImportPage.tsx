@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { UploadCard } from '../../components/UploadCard';
-import Grid from '@mui/material/Grid2';
-import { ImportExamplePanel } from './ImportExample';
-import { Button, Typography } from '@mui/material';
-import { importMediaSchema, ValidateObject } from './utils/schemaValidation';
 import { ImportStepper } from './ImportStepper';
 import { UploadPanel } from './UploadPanel';
-import { ValidateDataPanel } from './ValidateDataPanel';
+import { ParsedFile, ValidateDataPanel } from './ValidateDataPanel';
+import { DataPreviewPanel } from './DataPreviewPanel';
 
-type ImportMediumTranscript = {
+export type ImportMediumTranscript = {
   language: string; // in ISO 693-1 format
   sections?: {
     heading: string;
@@ -18,7 +14,7 @@ type ImportMediumTranscript = {
   }[];
 };
 
-type ImportMedium = {
+export type ImportMedium = {
   type: 'Video' | 'Podcast';
   title: string;
   publicationDate: string; // in ISO 8691 format
@@ -35,12 +31,14 @@ type ImportMedium = {
   duration: number; // in seconds
 };
 
-type ImportMedia = {
+export type ImportMedia = {
   media: ImportMedium[];
 };
 
 export const ImportPage: React.FC = () => {
+  console.log('<ImportPage>');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [validFiles, setValidFiles] = useState<ParsedFile[]>([]);
 
   return (
     <ImportStepper
@@ -52,11 +50,11 @@ export const ImportPage: React.FC = () => {
         },
         {
           label: 'Validate Data Check',
-          page: <ValidateDataPanel file={uploadedFiles[0]} />
+          page: <ValidateDataPanel files={uploadedFiles} setValidFiles={setValidFiles} />
         },
         {
           label: 'Data Preview',
-          page: <p>2</p>
+          page: <DataPreviewPanel validFiles={validFiles} />
         },
         {
           label: 'Finish',

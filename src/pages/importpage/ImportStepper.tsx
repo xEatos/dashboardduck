@@ -1,5 +1,5 @@
 import { Box, Button, Step, StepLabel, Stepper } from '@mui/material';
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface Step {
   label: React.ReactNode;
@@ -15,32 +15,36 @@ type StepperNavigation = {
   back: () => void;
   next: () => void;
   toStart: () => void;
+  finish: () => void;
 };
 
 export const StepperContext = createContext<StepperNavigation | undefined>(undefined);
 
 export const ImportStepper: React.FC<ImportStepperProps> = ({ initStep, steps }) => {
+  console.log('<ImportStepper>');
+
   const [activeStep, setActiveStep] = useState(initStep);
 
-  const stepperFuncs = useMemo(
-    () => ({
-      back: () => {
-        activeStep - 1 >= 0 && setActiveStep(activeStep - 1);
-      },
-      next: () => {
-        steps.length - 1 > activeStep && setActiveStep(activeStep + 1);
-      },
-      toStart: () => {
-        setActiveStep(0);
-      }
-    }),
-    [steps]
-  );
+  const stepperFuncs = {
+    back: () => {
+      console.log(activeStep);
+      activeStep - 1 >= 0 && setActiveStep(activeStep - 1);
+    },
+    next: () => {
+      steps.length - 1 > activeStep && setActiveStep(activeStep + 1);
+    },
+    finish: () => {
+      // todo stepper
+    },
+    toStart: () => {
+      setActiveStep(0);
+    }
+  };
 
   return (
     <StepperContext.Provider value={stepperFuncs}>
       <Box sx={{ width: '100%', padding: 1 }}>
-        <Stepper activeStep={activeStep}>
+        <Stepper activeStep={activeStep} sx={{ padding: '4px 0px', position: 'sticky' }}>
           {steps.map((step, index) => {
             return (
               <Step key={index}>
@@ -55,6 +59,7 @@ export const ImportStepper: React.FC<ImportStepperProps> = ({ initStep, steps })
   );
 };
 
+// TODO add function that should be called with the button click!!!!!!
 export const StepBox: React.FC<{
   nextEnable?: boolean;
   backEnable?: boolean;
@@ -62,12 +67,27 @@ export const StepBox: React.FC<{
   nextOption?: React.ReactNode;
   backOption?: React.ReactNode;
   finishOption?: React.ReactNode;
-}> = ({ nextEnable, nextOption, backEnable, backOption, finishEnable, finishOption }) => {
+  onNext?: () => void;
+  onBack?: () => void;
+  onFinish?: () => void;
+}> = ({
+  nextEnable,
+  nextOption,
+  onNext,
+  backEnable,
+  backOption,
+  onBack,
+  finishEnable,
+  finishOption,
+  onFinish
+}) => {
   const stepperFuncs = useContext(StepperContext);
+
   if (stepperFuncs === undefined) {
     throw new Error('Context is missing');
   }
-  const { next, back, toStart } = stepperFuncs;
+
+  const { next, back, finish } = stepperFuncs;
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 8px' }}>
@@ -77,7 +97,10 @@ export const StepBox: React.FC<{
         <Button
           variant={backEnable ? 'outlined' : 'contained'}
           disabled={!backEnable}
-          onClick={back}>
+          onClick={() => {
+            onBack?.();
+            back();
+          }}>
           {backOption ?? 'BACK'}
         </Button>
       )}
@@ -86,7 +109,10 @@ export const StepBox: React.FC<{
           <Button
             variant={nextEnable ? 'outlined' : 'contained'}
             disabled={!nextEnable}
-            onClick={next}
+            onClick={() => {
+              onNext?.();
+              next();
+            }}
             sx={{ mr: 2 }}>
             {nextOption ?? 'NEXT'}
           </Button>
@@ -95,7 +121,10 @@ export const StepBox: React.FC<{
           <Button
             variant={finishEnable ? 'outlined' : 'contained'}
             disabled={!finishEnable}
-            onClick={toStart}>
+            onClick={() => {
+              onFinish?.();
+              finish();
+            }}>
             {finishOption ?? 'FINISH'}
           </Button>
         )}

@@ -10,6 +10,7 @@ interface Props {
 }
 
 export const UploadPanel: React.FC<Props> = ({ uploadedFiles, setUploadedFiles }) => {
+  console.log('<UploadPanel>');
   return (
     <>
       <Grid
@@ -18,10 +19,11 @@ export const UploadPanel: React.FC<Props> = ({ uploadedFiles, setUploadedFiles }
         size={{ xs: 12 }}
         sx={{ alignContent: 'center', alignItems: 'center' }}>
         <UploadCard
+          files={uploadedFiles}
           fileTypes={['application/json']}
           maxFiles={1}
           maxSize={Number.POSITIVE_INFINITY}
-          onChange={setUploadedFiles}
+          setFiles={setUploadedFiles}
         />
       </Grid>
       <StepBox nextEnable={uploadedFiles.length > 0} />

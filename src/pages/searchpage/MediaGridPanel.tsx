@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, Suspense, useContext } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { Medium, useGetMedia } from '../../queries/useGetMedia';
 import { SearchQueryContext } from './SearchPage';
 import { FilterSelectionInput, ValueType } from '../../__generated__/graphql';
@@ -11,7 +11,7 @@ export interface MediaGridProps {
   media: Medium[];
 }
 
-const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
+export const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
   return (
     <Grid
       container
@@ -25,11 +25,9 @@ const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
         height: 'calc(100vh - 128px)',
         overflowY: 'scroll'
       }}>
-      {media.map((medium) => {
-        return Array(20)
-          .fill(0)
-          .map((_, index) => <MediumCard key={index} {...medium} />);
-      })}
+      {media.map((medium, index) => (
+        <MediumCard key={index} {...medium} />
+      ))}
     </Grid>
   );
 };

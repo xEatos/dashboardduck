@@ -22,7 +22,12 @@ type UploadContentProps = {
 
 const UploadContent = (props: UploadContentProps) => {
   return (
-    <CardActions sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <CardActions
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
       <Stack
         direction={'row'}
         sx={{ display: 'flex', alignItems: 'center', paddingRight: '24px' }}
@@ -57,27 +62,30 @@ const VisuallyHiddenInput = styled('input')({
 
 export interface UploadCardProps {
   fileTypes: string[];
-  onChange: (files: File[]) => void;
+  files: File[];
+  setFiles: (files: File[]) => void;
   maxSize: number;
   maxFiles: number;
 }
 
-export const UploadCard: React.FC<UploadCardProps> = (props) => {
-  const [files, setFiles] = useState<Array<File>>([]);
-
-  useEffect(() => {
-    props.onChange(files);
-  }, [files]);
-
+export const UploadCard: React.FC<UploadCardProps> = ({
+  files,
+  setFiles,
+  fileTypes,
+  maxSize,
+  maxFiles
+}) => {
   const handleOnFilesSelected = (otherFiles: FileList) => {
-    const csvFiles = convertDownLevelIteration(otherFiles).filter(
-      (file) => file.type === 'application/json'
+    const fs = convertDownLevelIteration(otherFiles).filter((file) =>
+      fileTypes.includes(file.type)
     );
-    setFiles(union(csvFiles, files, (a, b) => a.name === b.name));
+    setFiles(union(fs, files, (a, b) => a.name === b.name));
   };
 
   return (
-    <Card variant='elevation' sx={{ minWidth: 450, maxWidth: 450, margin: 2 }}>
+    <Card
+      variant='outlined'
+      sx={{ minWidth: 450, maxWidth: 450, margin: '40px 8px 8px 8px', borderWidth: '0px' }}>
       <CardContent
         sx={{
           border: '1px solid grey',
