@@ -17,15 +17,15 @@ export type ImportMediumTranscript = {
 export type ImportMedium = {
   type: 'Video' | 'Podcast';
   title: string;
-  publicationDate: string; // in ISO 8691 format
+  publicationDate?: string; // in ISO 8691 format
   language?: string | string[]; // in ISO 693-1 format
   thumbnailURL: URL;
   reference: {
     URL: URL;
-    publishedBy: string;
+    publishedBy?: string;
     hostedBy?: string;
   };
-  category?: string;
+  category?: string | string[];
   transcript?: ImportMediumTranscript[];
   subtitleLanguage?: string | string[]; // in ISO 693-1 format
   duration: number; // in seconds

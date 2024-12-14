@@ -4,7 +4,28 @@ import React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { github } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-const mediaSchema = `type ImportMediumTranscript = {
+const mediaSchema = `type ImportMedia = {
+  media: ImportMedium[];
+};
+
+type ImportMedium = {
+  type: 'Video' | 'Podcast';
+  title: string;
+  publicationDate?: string; // in ISO 8691 format
+  language?: string | string[]; // in ISO 693-1 format
+  thumbnailURL: URL;
+  reference: {
+    URL: URL;
+    publishedBy?: string;
+    hostedBy?: string;
+  }[]; // must have at least one element
+  categories?: string | string[];
+  transcript?: ImportMediumTranscript[];
+  subtitleLanguage?: string | string[]; // in ISO 693-1 format
+  duration: number; // in seconds
+};
+
+type ImportMediumTranscript = {
   language: string; // in ISO 693-1 format
   sections?: {
     heading: string;
@@ -12,27 +33,6 @@ const mediaSchema = `type ImportMediumTranscript = {
     endTimestamp?: number;
     text: string;
   }[];
-};
-
-type ImportMedium = {
-  type: 'Video' | 'Podcast';
-  title: string;
-  publicationDate: string; // in ISO 8691 format
-  language?: string | string[]; // in ISO 693-1 format
-  thumbnailURL: URL;
-  reference: {
-    URL: URL;
-    publishedBy: string;
-    hostedBy?: string;
-  };
-  category?: string;
-  transcript?: ImportMediumTranscript[];
-  subtitleLanguage?: string | string[]; // in ISO 693-1 format
-  duration: number; // in seconds
-};
-
-type ImportMedia = {
-  media: ImportMedium[];
 };`;
 
 const exampleJSON = `{

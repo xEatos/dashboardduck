@@ -77,6 +77,8 @@ export const ValidateDataPanel: React.FC<Props> = ({ files, setValidFiles }) => 
       };
     });
 
+  console.log(validatedFiles);
+
   return (
     <>
       <Box sx={{ display: 'flex', direction: 'column', marginTop: '40px' }}>

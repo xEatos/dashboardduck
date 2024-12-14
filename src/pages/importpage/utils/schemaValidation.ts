@@ -162,7 +162,7 @@ const importMediumSchema: JsonProperty[] = [
   },
   {
     label: 'publicationDate',
-    isRequired: true,
+    isRequired: false,
     isValidValue: parseISO8601
   },
   {
@@ -178,7 +178,7 @@ const importMediumSchema: JsonProperty[] = [
   {
     label: 'reference',
     isRequired: true,
-    isValidValue: parseObject,
+    isValidValue: parseArray,
     children: [
       {
         label: 'URL',
@@ -187,7 +187,7 @@ const importMediumSchema: JsonProperty[] = [
       },
       {
         label: 'publishedBy',
-        isRequired: true,
+        isRequired: false,
         isValidValue: parseString
       },
       {
@@ -198,7 +198,7 @@ const importMediumSchema: JsonProperty[] = [
     ]
   },
   {
-    label: 'category',
+    label: 'categories',
     isRequired: false,
     isValidValue: parseString
   },

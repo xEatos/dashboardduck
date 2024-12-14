@@ -60,10 +60,13 @@ export const MediumCard = (props: MediumCardProp) => {
       to={`medium/${props.id.split('/').pop()}`}
       style={{ textDecoration: 'none', color: 'inherit' }}>
       <MediumBadge type={props.type} />
-      <Card sx={{ maxWidth: 320, padding: '0px', borderRadius: '8px' }} variant='elevation'>
+      <Card
+        sx={{ minWidth: 320, maxWidth: 320, padding: '0px', borderRadius: '8px' }}
+        variant='elevation'>
         <CardMedia
           component='img'
-          height={180}
+          height={'180px'}
+          width={'320px'}
           image={props.thumbnail.toString()}
           loading='lazy'
           sx={{ borderRadius: '0px 0px 8px 8px', cursor: 'pointer' }}

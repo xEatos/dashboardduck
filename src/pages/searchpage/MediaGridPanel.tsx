@@ -19,10 +19,9 @@ export const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
       gap={2}
       spacing={2}
       sx={{
-        padding: 1,
+        padding: 2,
         border: '0px solid red',
-        justifyContent: 'center',
-        height: 'calc(100vh - 128px)',
+        height: 'calc(100vh - 256px)',
         overflowY: 'scroll'
       }}>
       {media.map((medium, index) => (
