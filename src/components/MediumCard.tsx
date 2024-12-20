@@ -57,7 +57,7 @@ const StatText: React.FC<PropsWithChildren> = (props) => (
 export const MediumCard = (props: MediumCardProp) => {
   return (
     <Link
-      to={`medium/${props.id.split('/').pop()}`}
+      to={`../medium/${encodeURIComponent(props.id)}`}
       style={{ textDecoration: 'none', color: 'inherit' }}>
       <MediumBadge type={props.type} />
       <Card

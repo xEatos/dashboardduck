@@ -30,13 +30,13 @@ const router = createBrowserRouter([
       {
         path: 'import',
         element: <ImportPage />
+      },
+      {
+        path: 'medium/:mediumId',
+        element: <DetailPage offset={64} />,
+        loader: mediumLoader
       }
     ]
-  },
-  {
-    path: 'medium/:mediumId',
-    element: <DetailPage />,
-    loader: mediumLoader
   }
 ]);
 

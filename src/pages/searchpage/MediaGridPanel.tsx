@@ -60,7 +60,7 @@ export const MediaGridPanel: React.FC = () => {
   return (
     <ErrorBoundary fallback={<p>Error to retrieve Media</p>}>
       <Suspense fallback={<p>Skeleton</p>}>
-        <MediaGridWrapper first={50} after='0' fiterInput={filerSelectionInput} />
+        <MediaGridWrapper first={50} after={undefined} fiterInput={filerSelectionInput} />
       </Suspense>
     </ErrorBoundary>
   );

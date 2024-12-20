@@ -89,11 +89,11 @@ const parseString = (v: any): string | ParseError =>
 const validTimeStamps = (props: any): boolean | ParseError => {
   //we can assume here that the object only contains valid props
   if (props.startTimestamp && props.endTimestamp) {
-    return props.startTimestamp < props.endTimestamp
+    return Number(props.startTimestamp) < Number(props.endTimestamp)
       ? true
       : new ParseError('Start timestamp is after end timestamp');
   } else {
-    return new ParseError('timestamps is not valid');
+    return true;
   }
 };
 
@@ -104,6 +104,18 @@ const parseObject = (v: any): Object | ParseError =>
 
 const parseArray = (v: any): Array<any> | ParseError =>
   Array.isArray(v) ? v : new ParseError('Value is not an array');
+
+const parseArrayWithTimeStamps = (v: any): Array<any> | ParseError => {
+  const ary = parseArray(v);
+  if (ary instanceof ParseError) {
+    return ary;
+  } else {
+    const checkedTimestamps = ary
+      .map((v) => validTimeStamps(v))
+      .find((v) => v instanceof ParseError);
+    return checkedTimestamps ? checkedTimestamps : ary;
+  }
+};
 
 const isEmpty = (obj: Record<string, any>): boolean => {
   for (const prop in obj) {
@@ -123,7 +135,7 @@ const importMediumTranscriptSchema: JsonProperty[] = [
   {
     label: 'sections',
     isRequired: false,
-    isValidValue: parseArray,
+    isValidValue: parseArrayWithTimeStamps,
     children: [
       {
         label: 'heading',

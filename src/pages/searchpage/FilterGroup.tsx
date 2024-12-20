@@ -1,15 +1,10 @@
-import React, { Fragment, ReactNode, useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { FilterOption, WikiData } from '../../__generated__/graphql';
 import { AccordionItem } from '../../components/AccordionItem';
 import { filterToInputFactory } from './InputFactory';
 import { WikiDataItem } from '../../components/WikiDataItem';
-import {
-  compare,
-  compareWikiData,
-  isSame,
-  wikiDataToStringWithId
-} from '../../utils/wikiDataFunctions';
-import { Chip, Typography } from '@mui/material';
+import { isSame, wikiDataToStringWithId } from '../../utils/wikiDataFunctions';
+import { Chip, SxProps, Theme, Typography } from '@mui/material';
 import { existsMoreThanOnce } from '../../utils/functions';
 import { SearchQueryContext } from './SearchPage';
 
@@ -66,17 +61,19 @@ export interface WikiDataChipProps {
   subLabel?: string;
   onDelete?: () => void;
   height?: string;
+  overrideSx?: SxProps<Theme>;
 }
 
 export const WikiDataChip: React.FC<WikiDataChipProps> = ({
   wikiData,
   subLabel,
+  overrideSx,
   height,
   onDelete
 }) => {
   return (
     <Chip
-      sx={{ height: height, padding: '2px 4px 2px 4' }}
+      sx={{ height: height, padding: '2px 4px 2px 4', ...overrideSx }}
       variant='outlined'
       label={
         subLabel ? (
