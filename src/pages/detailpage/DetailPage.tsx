@@ -42,6 +42,17 @@ export const DetailPageContainer: React.FC<{ id: string; offset: number }> = ({ 
 
   console.log(data);
 
+  let mediumUrl = undefined;
+  let thumbnailUrl = undefined;
+  try {
+    thumbnailUrl = data.thumbnail ? new URL(data.thumbnail) : undefined;
+    mediumUrl = data.thumbnail
+      ? new URL(
+          `https://www.youtube.com/watch?v=${data.thumbnail.split('/').filter((_, index, ary) => index === ary.length - 2)}`
+        ).toString()
+      : undefined;
+  } catch (e: any) {}
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -55,19 +66,13 @@ export const DetailPageContainer: React.FC<{ id: string; offset: number }> = ({ 
             publicationDate={data.publication ? data.publication : undefined}
             educationUsage={undefined}
             educationlevel={undefined}
-            thumbnail={data.thumbnail ? new URL(data.thumbnail) : undefined}
+            thumbnail={thumbnailUrl}
           />
 
           <LanguageInfoBox spoken={data.languages ?? []} subtitles={data.subtitleLanguages ?? []} />
           {data.transcripts ? (
             <TranscriptBox
-              mediumUrl={
-                data.thumbnail
-                  ? new URL(
-                      `https://www.youtube.com/watch?v=${data.thumbnail.split('/').filter((_, index, ary) => index === ary.length - 2)}`
-                    ).toString()
-                  : undefined
-              }
+              mediumUrl={mediumUrl}
               transcripts={data.transcripts.map((transcript) => ({
                 language: transcript.language,
                 chapters:

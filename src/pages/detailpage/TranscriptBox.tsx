@@ -1,4 +1,12 @@
-import { Box, IconButton, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import {
+  AccordionActions,
+  Box,
+  IconButton,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import React, { Fragment, Suspense, useState } from 'react';
 import { NoDataAvailable } from './InfoBox';
@@ -168,18 +176,23 @@ const ChapterSummary: React.FC<{
         onClick={(event) => {
           console.log('url', newUrl);
           if (newUrl) {
-            event.preventDefault();
             window.open(newUrl, '_blank');
+            event.preventDefault();
+            event.stopPropagation();
           }
         }}>
-        <a style={{ display: 'inherit' }} {...(newUrl ? { href: newUrl } : {})}>
+        <a style={{ display: 'inherit', zIndex: 2 }} {...(newUrl ? { href: newUrl } : {})}>
           {from !== undefined ? (
             convertDuration(from)
           ) : (
             <NoDataAvailable overrideStyle={{ mr: 0.5 }} size='Short' />
           )}
           {' - '}
-          {to !== undefined ? convertDuration(to) : <NoDataAvailable size='Short' />}
+          {to !== undefined ? (
+            convertDuration(to)
+          ) : (
+            <NoDataAvailable overrideStyle={{ marginLeft: 0.5 }} size='Short' />
+          )}
         </a>
       </Grid>
     </>
@@ -195,7 +208,6 @@ export const buildYoutubeTimestampLink = (url?: string, from?: number): string |
     if (parsedURL.host.includes('youtube.com') && parsedURL.searchParams.get('v')) {
       parsedURL.searchParams.set('t', from.toString());
       const a = parsedURL.toString();
-      console.log('a:', a);
       return a;
     }
   } catch (error: any) {

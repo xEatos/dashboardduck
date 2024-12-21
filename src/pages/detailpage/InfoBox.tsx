@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { ValueType, WikiData } from '../../__generated__/graphql';
 import { LocalDate } from '@js-joda/core';
 import Grid from '@mui/material/Grid2';
-import { Paper, SxProps, Theme, Typography } from '@mui/material';
+import { Divider, Paper, SxProps, Theme, Typography } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import { WikiDataChip } from '../searchpage/FilterGroup';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -29,11 +29,13 @@ export const NoDataAvailable: React.FC<{
 }> = ({ variant, size = 'Middle', overrideText, overrideStyle }) => {
   return (
     <Typography variant={variant} sx={{ fontStyle: 'italic', ...overrideStyle }}>
-      {(overrideText ?? size === 'Short')
-        ? 'n.a'
-        : size === 'Middle'
-          ? 'No data'
-          : 'No data available'}
+      {overrideText
+        ? overrideText
+        : size === 'Short'
+          ? 'n.a'
+          : size === 'Middle'
+            ? 'No data'
+            : 'No data available'}
     </Typography>
   );
 };
@@ -59,7 +61,7 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
         />
         <LeftInfoBox {...{ title, categories, duration, educationlevel, educationUsage }} />
       </Grid>
-      <DescriptionBox {...{ date: publicationDate, description, duration }} viewHeight={150} />
+      <DescriptionBox {...{ date: publicationDate, description, duration }} viewHeight={100} />
     </Grid>
   );
 };
@@ -183,7 +185,14 @@ const DescriptionBox: React.FC<{
             {parsedDate ? <Typography>{parsedDate.toString()}</Typography> : <NoDataAvailable />}
           </Grid>
         </Grid>
-        <div>{description ? text : <NoDataAvailable size='Long' />}</div>
+
+        {description ? (
+          <div>{text}</div>
+        ) : (
+          <Grid size={{ xs: 12 }} container>
+            <NoDataAvailable overrideText='No description available' />
+          </Grid>
+        )}
       </Grid>
       <Typography
         sx={{
