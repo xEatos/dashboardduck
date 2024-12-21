@@ -1,11 +1,13 @@
 import React, { Fragment, Suspense } from 'react';
+import Grid from '@mui/material/Grid2';
 import { LoaderFunction, useLoaderData } from 'react-router-dom';
 import { WikiData } from '../../__generated__/graphql';
 import { wikiDataToStringWithId } from '../../utils/wikiDataFunctions';
 import { useGetMedium } from '../../queries/useGetMedium';
-import { InfoBox, LanguageInfoBox } from './InfoBox';
+import { InfoBox, LanguageInfoBox, NoDataAvailable } from './InfoBox';
 import { Box, Container, CssBaseline, MenuItem, Paper, Select } from '@mui/material';
 import { TranscriptBox } from './TranscriptBox';
+import language from 'react-syntax-highlighter/dist/esm/languages/hljs/1c';
 
 interface MediumLoaderData {
   params: { mediumId: string };
@@ -21,7 +23,6 @@ export interface DetailPageProps {
 
 export const DetailPage: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
   const mediumProps = useLoaderData();
-  console.log(mediumProps.mediumId);
 
   return (
     <>
@@ -58,7 +59,29 @@ export const DetailPageContainer: React.FC<{ id: string; offset: number }> = ({ 
           />
 
           <LanguageInfoBox spoken={data.languages ?? []} subtitles={data.subtitleLanguages ?? []} />
-          <TranscriptBox chapters={} />
+          {data.transcripts ? (
+            <TranscriptBox
+              mediumUrl={
+                data.thumbnail
+                  ? new URL(
+                      `https://www.youtube.com/watch?v=${data.thumbnail.split('/').filter((_, index, ary) => index === ary.length - 2)}`
+                    ).toString()
+                  : undefined
+              }
+              transcripts={data.transcripts.map((transcript) => ({
+                language: transcript.language,
+                chapters:
+                  transcript.chapters?.map(({ id, heading, startTimestamp, endTimestamp }) => ({
+                    id: id ?? undefined,
+                    heading: heading ?? undefined,
+                    from: startTimestamp ?? undefined,
+                    to: endTimestamp ?? undefined
+                  })) ?? []
+              }))}
+            />
+          ) : (
+            <NoDataAvailable overrideText='No Transcript available' />
+          )}
         </Box>
       </Container>
     </React.Fragment>

@@ -52,7 +52,6 @@ export const useGetMedia = (
   after: string | undefined,
   filter: FilterSelectionInput[]
 ): Medium[] => {
-  console.log(first, after, filter);
   const { data } = useSuspenseQuery<MediaQuery, MediaQueryVariables>(GET_MEDIA, {
     variables: {
       first,

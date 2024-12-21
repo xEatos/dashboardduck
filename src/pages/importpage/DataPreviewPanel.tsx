@@ -13,9 +13,7 @@ interface Props {
 const elementsPerPage = 50;
 
 export const DataPreviewPanel: React.FC<Props> = ({ validFiles }) => {
-  console.log(validFiles);
   const media = validFiles.flatMap((file) => (file.obj?.media as ImportMedium[]) ?? []);
-  console.log(media);
 
   return (
     <>

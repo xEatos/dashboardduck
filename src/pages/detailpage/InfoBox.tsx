@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { ValueType, WikiData } from '../../__generated__/graphql';
 import { LocalDate } from '@js-joda/core';
 import Grid from '@mui/material/Grid2';
-import { Paper, Typography } from '@mui/material';
+import { Paper, SxProps, Theme, Typography } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import { WikiDataChip } from '../searchpage/FilterGroup';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -21,13 +21,14 @@ interface InfoBoxProps {
   educationUsage?: WikiData;
 }
 
-const NoDataAvailable: React.FC<{
+export const NoDataAvailable: React.FC<{
   variant?: Variant;
   size?: 'Short' | 'Middle' | 'Long';
   overrideText?: string;
-}> = ({ variant, size = 'Middle', overrideText }) => {
+  overrideStyle?: SxProps<Theme>;
+}> = ({ variant, size = 'Middle', overrideText, overrideStyle }) => {
   return (
-    <Typography variant={variant} sx={{ fontStyle: 'italic' }}>
+    <Typography variant={variant} sx={{ fontStyle: 'italic', ...overrideStyle }}>
       {(overrideText ?? size === 'Short')
         ? 'n.a'
         : size === 'Middle'
@@ -214,7 +215,7 @@ export const LanguageInfoBox: React.FC<{ subtitles: string[]; spoken: string[] }
     container
     sx={{
       padding: '8px 16px',
-      border: '1.5px solid #f2f2f2',
+      border: '1.5px solid #e1e1e1',
       borderRadius: '12px',
       margin: '8px 0px'
     }}>
