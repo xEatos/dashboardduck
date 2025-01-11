@@ -6,6 +6,7 @@ import { DetailPage, mediumLoader } from './pages/detailpage/DetailPage';
 import { AppPage } from './AppPage';
 import { TestPage } from './pages/testpage/TestPage';
 import { ImportPage } from './pages/importpage/ImportPage';
+import { IntegrationPage } from './pages/integrationpage/IntegrationPage';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
         path: 'medium/:mediumId',
         element: <DetailPage offset={64} />,
         loader: mediumLoader
+      },
+      {
+        path: 'integration/',
+        element: <IntegrationPage />
       }
     ]
   }

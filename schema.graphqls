@@ -1,0 +1,315 @@
+directive @defer(label: String, if: Boolean! = true) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+type AuthenticationAnswer {
+  id: ID!
+  status: AuthenticationStatus!
+}
+
+type AuthenticationConsumerLink {
+  id: ID!
+  url: String!
+}
+
+enum AuthenticationStatus {
+  AUTHENTICATED
+  PENDING
+  UNAUTHENTICATED
+}
+
+type Caption {
+  id: ID!
+  text: String!
+}
+
+type FilterOption {
+  """
+  e.g. minDate, language (unique) -> rename to filterID: String!, then use Label as actual
+  """
+  filterId: String!
+
+  """
+  e.g. Datepicker, Slider, FreeSolo, LabelSearch, Radio
+  """
+  filterType: String!
+
+  """
+  label that should be used for the input widget
+  """
+  label: String!
+
+  """
+  e.g. for language: en, de. for Datepicker: interval [date A, date B]
+  """
+  options: [WikiData!]!
+
+  """
+  group to associate this filter
+  """
+  group: String
+}
+
+input FilterSelectionInput {
+  """
+  e.g. minDate, language
+  """
+  filterId: String!
+
+  """
+  selected literal values, e.g. minDate: 2024-01-01
+  """
+  literals: [WikiDataLiteralInput!]
+
+  """
+  selected resources e.g. Q6
+  """
+  resources: [WikiDataResourceInput!]
+}
+
+union HasConsumerAnswer = UserConsumer | NoConsumerRegistered
+
+union HasYouTubeKeyAnswer = UserYouTubeKey | NoYouTubeKeyRegistered
+
+type LeanMedium {
+  id: ID!
+  type: MediumType
+  title: String
+  publication: String
+  channel: String
+  thumbnail: String
+  duration: Int
+}
+
+type Medium {
+  id: ID!
+  type: MediumType
+  title: String
+  caption: Caption
+  publication: String
+  channel: WikiData
+  thumbnail: String
+  categories: [WikiData!]!
+  transcripts: [Transcript!]
+  languages: [String!]
+  subtitleLanguages: [String!]
+  duration: Int
+}
+
+type MediumConnection {
+  pageInfo: PageInfo!
+  edges: [MediumEdge!]
+}
+
+type MediumEdge {
+  cursor: String!
+  node: LeanMedium!
+}
+
+"""
+Note: everything is optional, if medium is from Youtube we fetch data ourself.
+Otherwise we return an error if provide optional data is missing.
+"""
+input MediumInput {
+  type: MediumType!
+  title: String
+  publicationDate: String
+  language: [String!]
+  thumbnailUrl: String
+  references: [MediumReferenceInput!]!
+  categories: [String!]
+  transcript: [MediumTranscriptInput!]
+  subtitleLanguage: [String!]
+  duration: Int
+}
+
+input MediumReferenceInput {
+  url: String!
+  publishedBy: String
+  hostedBy: String
+}
+
+input MediumTranscriptInput {
+  language: String!
+  chapters: [TranscriptChaptersInput!]
+}
+
+enum MediumType {
+  Video
+  Podcast
+}
+
+type Mutation {
+  createOrUpdateConsumer(consumerInput: UserConsumerInput!): UserConsumer!
+  createUser(email: String!): User!
+  createOrUpdateYoutubeKey(keyInput: UserYouTubeInput!): UserYouTubeKey!
+  verifyUploadWlpVideosToWiki(wlpImport: WLPImportInput!): AuthenticationConsumerLink!
+  startWlpVideosImport(userId: String!): UploadAnswer!
+  addMedia(media: [MediumInput!]!): MediumConnection
+}
+
+type NoConsumerRegistered {
+  id: ID!
+}
+
+type NoYouTubeKeyRegistered {
+  id: ID!
+}
+
+type PageInfo {
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  getUser(email: String!): User!
+  getConsumerToken(userId: String!): HasConsumerAnswer!
+  getYoutubeKey(userId: String!): HasYouTubeKeyAnswer!
+  getAuthenticationLink(userId: ID!): AuthenticationConsumerLink!
+  isAuthenticated(userId: String!): AuthenticationAnswer!
+  getUploadStatus(userId: String!): UploadAnswer!
+  mediaConnections(first: Int!, after: String, filter: [FilterSelectionInput!]): MediumConnection
+  filterOptions: [FilterOption!]!
+  medium(mediumId: ID!): Medium
+  transcriptChapters(transcriptIds: [ID!]!): [TranscriptText!]
+  getYouTubeVideosData(key: String!, watchIds: [ID!]): [LeanMedium!]
+}
+
+type Transcript {
+  language: String!
+  chapters: [TranscriptChapter!]
+}
+
+type TranscriptChapter {
+  id: String
+  heading: String
+  startTimestamp: Int
+  endTimestamp: Int
+}
+
+input TranscriptChaptersInput {
+  heading: String!
+  startTimestamp: Int!
+  endTimestamp: Int!
+  text: String!
+}
+
+input TranscriptId {
+  id: ID!
+}
+
+type TranscriptText {
+  id: ID!
+  text: String!
+}
+
+type UploadAnswer {
+  id: ID!
+  message: String!
+}
+
+type User {
+  id: ID!
+  email: String!
+}
+
+type UserConsumer {
+  id: ID!
+  key: String!
+  secret: String!
+}
+
+input UserConsumerInput {
+  id: String!
+  key: String!
+  secret: String!
+}
+
+input UserYouTubeInput {
+  id: ID!
+  youTubeKey: String!
+}
+
+type UserYouTubeKey {
+  id: ID!
+  youTubeKey: String!
+}
+
+enum ValueType {
+  String
+  Date
+  Duration
+  ISO639
+  Number
+  Boolean
+}
+
+union WikiData = WikiDataResource | WikiDataLiteral
+
+type WikiDataLiteral {
+  """
+  " Text that represents the actual value
+  """
+  value: String!
+
+  """
+  Datatype of the value
+  """
+  type: ValueType!
+
+  """
+  language tag (ISO639) of the Literal if it is a text
+  """
+  lang: String
+}
+
+input WikiDataLiteralInput {
+  """
+  " Text that represents the actual value
+  """
+  value: String!
+
+  """
+  Datatype of the value
+  """
+  type: ValueType!
+
+  """
+  language tag (ISO639) of the Literal if it is a text
+  """
+  lang: String
+}
+
+type WikiDataResource {
+  """
+  " IRI with Q or P-Number
+  """
+  id: ID!
+
+  """
+  label of the Q or P-Number
+  """
+  label: String!
+}
+
+input WikiDataResourceInput {
+  """
+  " IRI with Q or P-Number
+  """
+  id: ID!
+
+  """
+  label of the Q or P-Number
+  """
+  label: String!
+}
+
+input WLPImportInput {
+  userId: ID!
+  wlpVideos: [WLPVideoInput!]!
+}
+
+input WLPVideoInput {
+  watchId: ID!
+  categories: [String!]!
+}

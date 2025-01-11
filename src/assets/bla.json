@@ -1,0 +1,171 @@
+{
+  "labels": {},
+  "description": {},
+  "claims": {
+    "P1": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P1",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 4
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        }
+      }
+    ],
+    "P8": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P8",
+          "datavalue": {
+            "value": "de",
+            "type": "string"
+          },
+          "datatype": "string"
+        }
+      }
+    ],
+    "P7": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P7",
+          "datavalue": {
+            "value": "https://i.ytimg.com/vi_webp/FuV3ysSKOsw/maxresdefault.webp",
+            "type": "string"
+          },
+          "datatype": "url"
+        }
+      }
+    ],
+    "P10": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P10",
+          "datavalue": {
+            "value": "https://www.youtube.com/watch?v=FuV3ysSKOsw",
+            "type": "string"
+          },
+          "datatype": "url"
+        },
+        "qualifiers": {
+          "P11": [
+            {
+              "snaktype": "value",
+              "property": "P11",
+              "datavalue": {
+                "value": {
+                  "time": "+2025-01-09T00:00:00Z"
+                },
+                "type": "time"
+              },
+              "datatype": "time"
+            }
+          ],
+          "P14": [
+            {
+              "snaktype": "value",
+              "property": "P14",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 8
+                },
+                "type": "wikibase-entityid"
+              },
+              "datatype": "wikibase-item"
+            }
+          ],
+          "P28": [
+            {
+              "snaktype": "value",
+              "property": "P28",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 2
+                },
+                "type": "wikibase-entityid"
+              },
+              "datatype": "wikibase-item"
+            }
+          ]
+        }
+      }
+    ],
+    "P4": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P4",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 9
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        }
+      },
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P4",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 11
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        }
+      }
+    ],
+    "P25": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P25",
+          "datavalue": {
+            "value": "de",
+            "type": "string"
+          },
+          "datatype": "string"
+        }
+      },
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P25",
+          "datavalue": {
+            "value": "en",
+            "type": "string"
+          },
+          "datatype": "string"
+        }
+      }
+    ],
+    "P31": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P26",
+          "datavalue": {
+            "value": "787",
+            "type": "string"
+          },
+          "datatype": "string"
+        }
+      }
+    ]
+  }
+}

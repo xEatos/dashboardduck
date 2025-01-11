@@ -13,9 +13,9 @@ type ImportMedium = {
   title: string;
   publicationDate?: string; // in ISO 8691 format
   language?: string | string[]; // in ISO 693-1 format
-  thumbnailURL: URL;
+  thumbnailURL: string;
   reference: {
-    URL: URL;
+    URL: string;
     publishedBy?: string;
     hostedBy?: string;
   }[]; // must have at least one element
