@@ -34,7 +34,7 @@ export const ImportStepper: React.FC<ImportStepperProps> = ({ initStep, steps })
       steps.length - 1 > activeStep && setActiveStep(activeStep + 1);
     },
     finish: () => {
-      // todo stepper
+      setActiveStep(0);
     },
     toStart: () => {
       setActiveStep(0);

@@ -1,6 +1,7 @@
 import { Suspense, useDeferredValue, useState } from 'react';
 import { LoaderFunction, Path } from 'react-router-dom';
 import { useGetMedia } from '../../queries/useGetMedia';
+import { CircularProgress } from '@mui/material';
 
 export const testLoader: LoaderFunction = (context): Partial<Path> => {
   const url = new URL(context.request.url);
@@ -57,7 +58,7 @@ export const TestPage: React.FC = () => {
           }}
         />
       </label>
-      <Suspense fallback={<h2>Loading...</h2>}>
+      <Suspense fallback={<CircularProgress />}>
         <div
           style={{
             opacity: isStale ? 0.5 : 1

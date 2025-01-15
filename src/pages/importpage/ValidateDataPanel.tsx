@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import React, { Fragment, PropsWithChildren, ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -82,11 +82,11 @@ export const ValidateDataPanel: React.FC<Props> = ({ files, setValidFiles }) => 
   return (
     <>
       <Box sx={{ display: 'flex', direction: 'column', marginTop: '40px' }}>
-        <CheapSuspense fallback={<p>Loading...</p>}>
+        <CheapSuspense fallback={<CircularProgress />}>
           {validatedFiles && (
             <Grid container sx={{ flexGrow: 1 }}>
-              {validatedFiles.map((it) => (
-                <ValidationResult {...it} />
+              {validatedFiles.map((it, index) => (
+                <ValidationResult key={index} {...it} />
               ))}
             </Grid>
           )}

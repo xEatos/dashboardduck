@@ -8,7 +8,7 @@ import { TestPage } from './pages/testpage/TestPage';
 import { ImportPage } from './pages/importpage/ImportPage';
 import { IntegrationPage } from './pages/integrationpage/IntegrationPage';
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   uri: 'http://localhost:4000/',
   cache: new InMemoryCache()
 });

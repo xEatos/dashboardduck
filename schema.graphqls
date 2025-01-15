@@ -67,7 +67,10 @@ input FilterSelectionInput {
 
 union HasConsumerAnswer = UserConsumer | NoConsumerRegistered
 
-union HasYouTubeKeyAnswer = UserYouTubeKey | NoYouTubeKeyRegistered
+type HasRunningJobsAnswer {
+  uploadId: String!
+  message: String!
+}
 
 type LeanMedium {
   id: ID!
@@ -150,10 +153,6 @@ type NoConsumerRegistered {
   id: ID!
 }
 
-type NoYouTubeKeyRegistered {
-  id: ID!
-}
-
 type PageInfo {
   hasPreviousPage: Boolean!
   hasNextPage: Boolean!
@@ -164,10 +163,10 @@ type PageInfo {
 type Query {
   getUser(email: String!): User!
   getConsumerToken(userId: String!): HasConsumerAnswer!
-  getYoutubeKey(userId: String!): HasYouTubeKeyAnswer!
   getAuthenticationLink(userId: ID!): AuthenticationConsumerLink!
   isAuthenticated(userId: String!): AuthenticationAnswer!
-  getUploadStatus(userId: String!): UploadAnswer!
+  getUploadStatus(uploadId: String!): UploadAnswer!
+  hasUserRunningImport(userId: String!): HasRunningJobsAnswer!
   mediaConnections(first: Int!, after: String, filter: [FilterSelectionInput!]): MediumConnection
   filterOptions: [FilterOption!]!
   medium(mediumId: ID!): Medium

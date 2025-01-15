@@ -19,6 +19,7 @@ import {
 } from '../../utils/wikiDataFunctions';
 import { LoaderFunction, Path, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { MediaGridPanel } from './MediaGridPanel';
+import { CircularProgress } from '@mui/material';
 
 export interface SearchQueryValues {
   filterInputs: Record<string, WikiData[]>;
@@ -128,7 +129,7 @@ export const SearchPage: React.FC = () => {
         size={{ xs: 12 }}
         columnGap={3}
         sx={{ border: '0px solid black' }}>
-        <Suspense fallback={<p>loading filters</p>}>
+        <Suspense fallback={<CircularProgress />}>
           <FilterPanel />
         </Suspense>
         <MediaGridPanel />

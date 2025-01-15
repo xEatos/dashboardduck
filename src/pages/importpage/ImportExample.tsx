@@ -48,7 +48,7 @@ const exampleJSON = `{
         "publishedBy":"Doktor Whatson",
         "hostedBy":"YouTube"
       },
-      "category":[
+      "categories":[
         "Medicine",
         "Gastroenterology"
       ],

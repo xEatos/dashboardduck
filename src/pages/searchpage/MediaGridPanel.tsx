@@ -6,6 +6,7 @@ import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 import { MediumCard } from '../../components/MediumCard';
 import Grid from '@mui/material/Grid2';
 import { ErrorBoundary } from 'react-error-boundary';
+import { CircularProgress } from '@mui/material';
 
 export interface MediaGridProps {
   media: Medium[];
@@ -21,7 +22,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
       sx={{
         padding: 2,
         border: '0px solid red',
-        height: 'calc(100vh - 256px)',
+        height: 'calc(100vh - 300px)',
         overflowY: 'scroll'
       }}>
       {media.map((medium, index) => (
@@ -59,7 +60,7 @@ export const MediaGridPanel: React.FC = () => {
 
   return (
     <ErrorBoundary fallback={<p>Error to retrieve Media</p>}>
-      <Suspense fallback={<p>Skeleton</p>}>
+      <Suspense fallback={<CircularProgress />}>
         <MediaGridWrapper first={50} after={undefined} fiterInput={filerSelectionInput} />
       </Suspense>
     </ErrorBoundary>

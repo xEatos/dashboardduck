@@ -7,6 +7,7 @@ import { User } from './IntegrationPage';
 import Grid from '@mui/material/Grid2';
 import { WikibaseCard } from './integrationContent/WikibaseCard';
 import { YoutubeCard } from './integrationContent/YoutubeCard';
+import { MirahezeCard } from './integrationContent/MirahezeCard';
 
 interface Props {
   id: string;
@@ -14,6 +15,8 @@ interface Props {
   content: React.ReactNode;
   logo: URL;
   overrideSx?: SxProps<Theme>;
+  logoHeight?: string;
+  logoWidth?: string;
 }
 
 export const IntegrationCard: React.FC<Props> = (props) => {
@@ -49,9 +52,13 @@ export const IntegrationCard: React.FC<Props> = (props) => {
           <Grid container sx={{ justifyContent: 'center' }}>
             <img
               src={props.logo.toString()}
-              width='400'
               alt={props.label}
-              style={{ margin: '4px', cursor: 'pointer' }}
+              height={props.logoHeight}
+              width={props.logoWidth}
+              style={{
+                margin: '4px',
+                cursor: 'pointer'
+              }}
               onClick={handleOpenClick}
             />
           </Grid>
@@ -65,32 +72,52 @@ export const IntegrationCard: React.FC<Props> = (props) => {
 
 export const IntegrationsCards: React.FC<User> = (props) => {
   return (
-    <Grid container spacing={1} m={1}>
-      <Grid>
-        <IntegrationCard
-          id='youtube'
-          label='YouTube'
-          logo={
-            new URL(
-              'https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png'
-            )
-          }
-          overrideSx={{ maxWidth: 'auto', width: '500px' }}
-          content={<YoutubeCard {...props} />}
-        />
+    <Grid container spacing={1} m={1} direction={'row'}>
+      <Grid container spacing={1} m={1} direction={'column'}>
+        <Grid>
+          <IntegrationCard
+            id='Wikibase'
+            label='Wikibase BorgNetzwerk'
+            logo={
+              new URL(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Wikibase_logo.svg/640px-Wikibase_logo.svg.png'
+              )
+            }
+            logoHeight='300px'
+            overrideSx={{ maxWidth: 'auto', width: '860px' }}
+            content={<WikibaseCard {...props} />}
+          />
+        </Grid>
+        <Grid>
+          <IntegrationCard
+            id='Miraheze'
+            label='Miraheze BorgNetzwerk'
+            logo={
+              new URL(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Miraheze-Logo.svg/640px-Miraheze-Logo.svg.png'
+              )
+            }
+            logoHeight='300px'
+            overrideSx={{ maxWidth: 'auto', width: '860px' }}
+            content={<MirahezeCard {...props} />}
+          />
+        </Grid>
       </Grid>
-      <Grid>
-        <IntegrationCard
-          id='Wikibase'
-          label='Wikibase BorgNetzwerk'
-          logo={
-            new URL(
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Wikibase_logo.svg/640px-Wikibase_logo.svg.png'
-            )
-          }
-          overrideSx={{ maxWidth: 'auto', width: '860px' }}
-          content={<WikibaseCard {...props} />}
-        />
+      <Grid container spacing={1} m={1} direction={'column'}>
+        <Grid>
+          <IntegrationCard
+            id='youtube'
+            label='YouTube'
+            logo={
+              new URL(
+                'https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png'
+              )
+            }
+            logoWidth='450px'
+            overrideSx={{ maxWidth: 'auto', width: '860px' }}
+            content={<YoutubeCard {...props} />}
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

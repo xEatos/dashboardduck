@@ -1,19 +1,21 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { getUserSession, User } from '../integrationpage/IntegrationPage';
-import { ParsedFile } from './ValidateDataPanel';
 import React, { useEffect, useState } from 'react';
 import { useIsUserAuthenticated } from '../../queries/userGetUserAuthenticated';
 import { AuthenticationStatus, VerifyUploadMutation } from '../../__generated__/graphql';
+import { StepBox } from './ImportStepper';
+import { UploadBar } from '../../components/UploadBar';
 
 interface Props {
   link: VerifyUploadMutation | null | undefined;
+  startUpload: (userId: string) => void;
 }
 
 // polling in new stepper until user has verified by checking request_query_string, access_token, etc (GET_IS_VERIFIED)
 // Ask user to start upload, then polling for updated until done, can not be interrupted
 // if backend is done remove uploaded json file (as a flag?)
 
-export const AuthenticatePanel: React.FC<Props> = ({ link }) => {
+export const AuthenticatePanel: React.FC<Props> = ({ link, startUpload }) => {
   const user = getUserSession();
   const [authenticationBtnClicked, setAuthenticationBtnClicked] = useState(false);
   const [authenticationDone, setAuthenticationDone] = useState(false);
@@ -25,14 +27,39 @@ export const AuthenticatePanel: React.FC<Props> = ({ link }) => {
     }
   };
 
-  if (authenticationDone) {
-    return <Button>Press start to begin the import</Button>;
-  }
-
-  return authenticationBtnClicked && user ? (
+  const renderCenterPart = authenticationDone ? (
+    <Typography variant='h6'>Please press next to begin the import</Typography>
+  ) : authenticationBtnClicked && user ? (
     <PollingForAuthenticationDone {...{ user, setAuthenticationDone }} />
   ) : (
-    <Button onClick={handleOpenAuth}>Authenticate your account at bn wikibase </Button>
+    <Button variant='outlined' onClick={handleOpenAuth}>
+      Authenticate your account at bn wikibase{' '}
+    </Button>
+  );
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        marginTop: '40px'
+      }}>
+      <Box style={{ display: 'flex', justifyContent: 'center' }}>{renderCenterPart}</Box>
+      <StepBox
+        {...(authenticationDone
+          ? {
+              backEnable: true,
+              nextEnable: true,
+              onNext: () => {
+                if (user) {
+                  startUpload(user.userId);
+                }
+              }
+            }
+          : { backEnable: true, nextEnable: false })}
+      />
+    </Box>
   );
 };
 
@@ -41,8 +68,6 @@ const PollingForAuthenticationDone: React.FC<{
   setAuthenticationDone: (v: boolean) => void;
 }> = ({ user, setAuthenticationDone }) => {
   const { data, error, loading } = useIsUserAuthenticated(user.userId, 1000);
-  console.log('PollingForAuthenticationDone');
-  console.log(data);
 
   useEffect(() => {
     if (data?.isAuthenticated.status === AuthenticationStatus.Authenticated) {
@@ -52,15 +77,15 @@ const PollingForAuthenticationDone: React.FC<{
   }, [data]);
 
   if (error || loading) {
-    return <Typography>Loading...</Typography>;
+    return <CircularProgress />;
   }
 
   switch (data?.isAuthenticated.status) {
     case AuthenticationStatus.Pending:
-      return <Typography>Authentication Pending</Typography>;
+      return <Typography variant='h6'>Authentication Pending</Typography>;
     case AuthenticationStatus.Authenticated:
-      return <Typography>Authencation Complete</Typography>;
+      return <Typography variant='h6'>Authencation Complete</Typography>;
     default:
-      return <Typography>Not Authenticated</Typography>;
+      return <Typography variant='h6'>Not Authenticated</Typography>;
   }
 };

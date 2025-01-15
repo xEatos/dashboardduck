@@ -1,6 +1,7 @@
 import {
   AccordionActions,
   Box,
+  CircularProgress,
   IconButton,
   MenuItem,
   Select,
@@ -126,7 +127,7 @@ export const TranscriptBox: React.FC<{
 const TranscriptText: React.FC<{ id?: string }> = ({ id }) => {
   return id ? (
     <ErrorBoundary fallback={<p>Error finding Transcript</p>}>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<CircularProgress />}>
         <TranscriptTextContainer id={id} />
       </Suspense>
     </ErrorBoundary>

@@ -6,12 +6,12 @@ import Grid from '@mui/material/Grid2';
 import { SecretInput } from '../../../components/inputs/SecretInput';
 import { SET_YOUTUBE_KEY } from '../../../mutations/useSetYouTubeKey';
 import { useGetYouTubeKey } from '../../../queries/useGetYouTubeKey';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 
 export const YoutubeCard: React.FC<User> = ({ userId }) => {
   return (
     <ErrorBoundary fallback={<p>Error</p>}>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<CircularProgress />}>
         <YoutubeCardContent userId={userId} />
       </Suspense>
     </ErrorBoundary>
@@ -21,22 +21,10 @@ export const YoutubeCard: React.FC<User> = ({ userId }) => {
 export const YoutubeCardContent: React.FC<{ userId: string }> = ({ userId }) => {
   const [setYouTubeKey, { data }] = useMutation(SET_YOUTUBE_KEY);
   console.log('data:', data);
-  const { getYoutubeKey } = useGetYouTubeKey(userId); // cache?
   const [newKey, setNewKey] = useState('');
-
-  let cKey = getYoutubeKey?.__typename === 'UserYouTubeKey' ? getYoutubeKey.youTubeKey : undefined;
-  cKey = data?.createOrUpdateYoutubeKey.youTubeKey
-    ? data.createOrUpdateYoutubeKey.youTubeKey
-    : cKey;
-  console.log('getYoutubeKey:', cKey); // TODO update bug
 
   return (
     <Grid container spacing={1}>
-      {cKey ? (
-        <Grid>
-          <SecretInput readOnly label={'Current API Key'} value={cKey} charCount={40} />
-        </Grid>
-      ) : null}
       <Grid size={{ xs: 4 }} sx={{ alignSelf: 'center' }}>
         <Typography sx={{ paddingTop: '12px' }}>{'Set new Key:'}</Typography>
       </Grid>

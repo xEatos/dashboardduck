@@ -17,13 +17,14 @@ const documents = {
     "\nmutation CreateOrUpdateConsumer($consumerInput: UserConsumerInput!) {\n  createOrUpdateConsumer(consumerInput: $consumerInput) {\n    id\n    key\n    secret\n  }\n}\n": types.CreateOrUpdateConsumerDocument,
     "\n  mutation CreateUser($email: String!) {\n  createUser(email: $email) {\n    email\n    id\n  }\n}\n": types.CreateUserDocument,
     "mutation SetYouTubeKey($keyInput: UserYouTubeInput!) {\n  createOrUpdateYoutubeKey(keyInput: $keyInput) {\n    id\n    youTubeKey\n  }\n}": types.SetYouTubeKeyDocument,
+    "\n  mutation StartWlpVideosImport($userId: String!) {\n  startWlpVideosImport(userId: $userId) {\n    id\n    message\n  }\n}\n  ": types.StartWlpVideosImportDocument,
     "\n  mutation verifyUpload($wlpImport: WLPImportInput!) {\n  verifyUploadWlpVideosToWiki(wlpImport: $wlpImport) {\n    id\n    url\n  }\n}\n  ": types.VerifyUploadDocument,
+    "\n  query HasUserRunningImport($userId: String!) {\n  hasUserRunningImport(userId: $userId) {\n    uploadId\n    message\n  }\n}": types.HasUserRunningImportDocument,
     "\n  query Media($first: Int!, $after: String, $filter: [FilterSelectionInput!],) {\n  mediaConnections(first: $first, after: $after, filter: $filter) {\n    edges {\n      node {\n        id\n        title\n        thumbnail\n        publication\n        duration\n        channel\n      }\n      cursor\n    }\n  }\n}\n": types.MediaDocument,
     "\n  query FilterOptions {\n  filterOptions {\n    filterId\n    filterType\n    label\n    group\n    options {\n      ... on WikiDataResource {\n        __typename\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        __typename\n        lang\n        type\n        value\n      }\n    }\n  }\n}\n": types.FilterOptionsDocument,
     "\n  query SingleMedium($mediumId: ID!) {\n  medium(mediumId: $mediumId) {\n    id\n    type\n    title\n    publication\n    languages\n    channel {\n      ... on WikiDataResource {\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        value\n        type\n        lang\n      }\n    }\n    thumbnail\n    categories {\n      ... on WikiDataResource {\n        id\n        label\n      }\n      ... on WikiDataLiteral {\n        value\n        type\n        lang\n      }\n    }\n    subtitleLanguages\n    duration\n    transcripts {\n      chapters {\n        id\n        heading\n        startTimestamp\n        endTimestamp\n      }\n      language\n    }\n    caption {\n      id\n      text\n    }\n  }\n}\n": types.SingleMediumDocument,
     "\n  query TranscriptChapters($transcriptIds: [ID!]!) {\n  transcriptChapters(transcriptIds: $transcriptIds) {\n    id\n    text\n  }\n}\n": types.TranscriptChaptersDocument,
-    "\n  query GetUploadStatus($userId: String!) {\n  getUploadStatus(userId: $userId) {\n    id\n    message\n  }\n}\n": types.GetUploadStatusDocument,
-    "\n  query GetYoutubeKey($userId: String!) {\n    getYoutubeKey(userId: $userId) {\n      ... on UserYouTubeKey {\n        id\n        youTubeKey\n      }\n      ... on NoYouTubeKeyRegistered {\n        id\n      }\n    }\n  }\n  ": types.GetYoutubeKeyDocument,
+    "\n  query GetUploadStatus($uploadId: String!) {\n  getUploadStatus(uploadId: $uploadId) {\n    id\n    message\n  }\n}\n": types.GetUploadStatusDocument,
     "\n  query GetUser($email: String!) {\n  getUser(email: $email) {\n    email\n    id\n  }\n}\n": types.GetUserDocument,
     "\n  query GetYouTubeVideosData($key: String!, $watchIds: [ID!]) {\n  getYouTubeVideosData(key: $key, watchIds: $watchIds) {\n    id\n    type\n    title\n    publication\n    channel\n    thumbnail\n    duration\n  }\n}\n  ": types.GetYouTubeVideosDataDocument,
     "\n  query UserConsumer($userId: String!) {\n  getConsumerToken(userId: $userId) {\n    ... on UserConsumer {\n      id\n      key\n      secret\n    }\n    ... on NoConsumerRegistered {\n      id\n    }\n  }\n}\n": types.UserConsumerDocument,
@@ -59,7 +60,15 @@ export function gql(source: "mutation SetYouTubeKey($keyInput: UserYouTubeInput!
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  mutation StartWlpVideosImport($userId: String!) {\n  startWlpVideosImport(userId: $userId) {\n    id\n    message\n  }\n}\n  "): (typeof documents)["\n  mutation StartWlpVideosImport($userId: String!) {\n  startWlpVideosImport(userId: $userId) {\n    id\n    message\n  }\n}\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation verifyUpload($wlpImport: WLPImportInput!) {\n  verifyUploadWlpVideosToWiki(wlpImport: $wlpImport) {\n    id\n    url\n  }\n}\n  "): (typeof documents)["\n  mutation verifyUpload($wlpImport: WLPImportInput!) {\n  verifyUploadWlpVideosToWiki(wlpImport: $wlpImport) {\n    id\n    url\n  }\n}\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query HasUserRunningImport($userId: String!) {\n  hasUserRunningImport(userId: $userId) {\n    uploadId\n    message\n  }\n}"): (typeof documents)["\n  query HasUserRunningImport($userId: String!) {\n  hasUserRunningImport(userId: $userId) {\n    uploadId\n    message\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -79,11 +88,7 @@ export function gql(source: "\n  query TranscriptChapters($transcriptIds: [ID!]!
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetUploadStatus($userId: String!) {\n  getUploadStatus(userId: $userId) {\n    id\n    message\n  }\n}\n"): (typeof documents)["\n  query GetUploadStatus($userId: String!) {\n  getUploadStatus(userId: $userId) {\n    id\n    message\n  }\n}\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  query GetYoutubeKey($userId: String!) {\n    getYoutubeKey(userId: $userId) {\n      ... on UserYouTubeKey {\n        id\n        youTubeKey\n      }\n      ... on NoYouTubeKeyRegistered {\n        id\n      }\n    }\n  }\n  "): (typeof documents)["\n  query GetYoutubeKey($userId: String!) {\n    getYoutubeKey(userId: $userId) {\n      ... on UserYouTubeKey {\n        id\n        youTubeKey\n      }\n      ... on NoYouTubeKeyRegistered {\n        id\n      }\n    }\n  }\n  "];
+export function gql(source: "\n  query GetUploadStatus($uploadId: String!) {\n  getUploadStatus(uploadId: $uploadId) {\n    id\n    message\n  }\n}\n"): (typeof documents)["\n  query GetUploadStatus($uploadId: String!) {\n  getUploadStatus(uploadId: $uploadId) {\n    id\n    message\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

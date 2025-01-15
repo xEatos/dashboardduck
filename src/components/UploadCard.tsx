@@ -1,4 +1,5 @@
 import { Clear, CloudUpload, Description, UploadFile } from '@mui/icons-material';
+import ClearIcon from '@mui/icons-material/Clear';
 import {
   Box,
   Button,
@@ -41,7 +42,7 @@ const UploadContent = (props: UploadContentProps) => {
         </Box>
       </Stack>
       <IconButton onClick={() => props.onHandleRemove(props.file)}>
-        <Clear />
+        <ClearIcon />
       </IconButton>
     </CardActions>
   );
@@ -126,7 +127,6 @@ export const UploadCard: React.FC<UploadCardProps> = ({
             multiple
           />
         </Button>
-        <Typography> </Typography>
       </CardActions>
       <Collapse in={files.length > 0}>
         <CardContent>

@@ -31,13 +31,15 @@ export const DataPreviewPanel: React.FC<Props> = ({ validFiles, sendImportData }
   const wlpVideos: WlpVideoInput[] = media.map((medium) => {
     return {
       watchId: new URL(medium.reference[0].URL).searchParams.get('v')!!,
-      categories: Array.isArray(medium.category)
-        ? medium.category
-        : medium.category
-          ? [medium.category]
+      categories: Array.isArray(medium.categories)
+        ? medium.categories
+        : medium.categories
+          ? [medium.categories]
           : []
     };
   });
+
+  console.log(wlpVideos);
 
   return (
     <>
@@ -61,15 +63,9 @@ const DataPreviewGridView: React.FC<{ media: ImportMedium[] }> = ({ media }) => 
   const [page, setPage] = useState(0);
 
   return (
-    <>
-      <Pagination
-        count={Math.ceil(media.length / elementsPerPage)}
-        color='primary'
-        onChange={(_, value) => {
-          setPage(value - 1);
-        }}
-      />
-      <Box />
+    <Grid
+      container
+      sx={{ alignItems: 'center', alignContent: 'center', flexDirection: 'column', gap: 1 }}>
       <MediaGrid
         media={media
           .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
@@ -84,6 +80,13 @@ const DataPreviewGridView: React.FC<{ media: ImportMedium[] }> = ({ media }) => 
             title: importMedium.title
           }))}
       />
-    </>
+      <Pagination
+        count={Math.ceil(media.length / elementsPerPage)}
+        color='primary'
+        onChange={(_, value) => {
+          setPage(value - 1);
+        }}
+      />
+    </Grid>
   );
 };

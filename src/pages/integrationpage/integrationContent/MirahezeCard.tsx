@@ -5,21 +5,12 @@ import Grid from '@mui/material/Grid2';
 import { SecretInput } from '../../../components/inputs/SecretInput';
 import { ErrorBoundary } from 'react-error-boundary';
 import consumerRights from '../../../assets/ConsumerRights.png';
-import {
-  Button,
-  CircularProgress,
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  Typography
-} from '@mui/material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CheckIcon from '@mui/icons-material/Check';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import { useMutation } from '@apollo/client';
 import { CREATE_CONSUMER } from '../../../mutations/useCreateConsumer';
+import { Command, WikibaseUserConsumer } from './WikibaseCard';
 
-export const WikibaseCard: React.FC<User> = (props) => (
+export const MirahezeCard: React.FC<User> = (props) => (
   <ErrorBoundary fallback={<p>Error!</p>}>
     <Suspense fallback={<CircularProgress />}>
       <WikibaseCardContent {...props} />
@@ -27,8 +18,8 @@ export const WikibaseCard: React.FC<User> = (props) => (
   </ErrorBoundary>
 );
 
-const WikibaseCardContent: React.FC<User> = ({ email, userId }) => {
-  const { getConsumerToken } = useSuspenseGetUserConsumerToken(userId);
+const WikibaseCardContent: React.FC<User> = ({ userId }) => {
+  const { getConsumerToken } = useSuspenseGetUserConsumerToken(userId); // TODO change to include a wiki id
   switch (getConsumerToken.__typename) {
     case 'NoConsumerRegistered': {
       return <WikibaseNoConsumerRegistered userId={getConsumerToken.id} />;
@@ -38,28 +29,6 @@ const WikibaseCardContent: React.FC<User> = ({ email, userId }) => {
       return <WikibaseUserConsumer {...{ id, ckey: key, secret }} />;
     }
   }
-};
-
-export const WikibaseUserConsumer: React.FC<{ ckey: string; secret: string }> = ({
-  ckey,
-  secret
-}) => {
-  return (
-    <Grid container spacing={1} justifyContent={'center'}>
-      <Grid>
-        <SecretInput
-          readOnly
-          label={'Consumer Key'}
-          defaultValue={ckey}
-          charCount={32}
-          isHidden={false}
-        />
-      </Grid>
-      <Grid>
-        <SecretInput readOnly label={'Consumer Secret'} defaultValue={secret} charCount={40} />
-      </Grid>
-    </Grid>
-  );
 };
 
 const urlPrefix = 'https://preferably-valid-ibex.ngrok-free.app/oAuth/';
@@ -107,8 +76,8 @@ const WikibaseNoConsumerRegistered: React.FC<{ userId: string }> = ({ userId }) 
         <Grid container size={{ xs: 11 }} spacing={1}>
           <Command
             id='open'
-            label='Pleas open the Wikibase BN Page and add the following data that is provided below:'
-            copyText='https://bnwiki.wikibase.cloud/wiki/Special:OAuthConsumerRegistration/propose/oauth1a'
+            label='Pleas open the Miraheze Meta Page and add the following data that is provided below:'
+            copyText='https://meta.miraheze.org/wiki/Special:OAuthConsumerRegistration/propose/oauth1a'
           />
         </Grid>
         <Grid size={{ xs: 1 }}>
@@ -119,7 +88,7 @@ const WikibaseNoConsumerRegistered: React.FC<{ userId: string }> = ({ userId }) 
           <Command
             id='desc'
             label='Application description:'
-            copyText='DashboardDuck is an app for curated scientific videos and podcast. '
+            copyText='DashboardDuck is an app for curated scientific videos and podcast.'
           />
           <Command id='callback' label='OAuth "callback" URL:' copyText={url} />
         </Grid>
@@ -172,51 +141,6 @@ const WikibaseNoConsumerRegistered: React.FC<{ userId: string }> = ({ userId }) 
         <Grid size={{ xs: 11 }} container sx={{ justifyContent: 'end' }} spacing={1}>
           <Button onClick={handleOnFinish}>Finish</Button>
         </Grid>
-      </Grid>
-    </>
-  );
-};
-
-export const Command: React.FC<{ id: string; label: string; copyText: string }> = ({
-  id,
-  label,
-  copyText
-}) => {
-  const [isCopied, setIsCopied] = useState(false);
-  return (
-    <>
-      <Grid size={{ xs: 3 }} alignSelf={'center'}>
-        <Typography>{label}</Typography>
-      </Grid>
-      <Grid size={{ xs: 8 }}>
-        <FormControl hiddenLabel sx={{ width: `64ch` }} variant='standard'>
-          <Input
-            id={'standard-adornment-copy' + id}
-            slotProps={{
-              input: {
-                readOnly: true
-              }
-            }}
-            defaultValue={copyText}
-            multiline={copyText.length > 32}
-            endAdornment={
-              <InputAdornment position='end'>
-                <IconButton
-                  aria-label={copyText}
-                  onClick={async () => {
-                    try {
-                      await navigator.clipboard.writeText(copyText);
-                      setIsCopied(true);
-                    } catch (error: any) {
-                      console.error(error.message);
-                    }
-                  }}>
-                  {isCopied ? <CheckIcon /> : <ContentCopyIcon />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
       </Grid>
     </>
   );

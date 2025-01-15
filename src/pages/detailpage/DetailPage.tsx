@@ -5,7 +5,15 @@ import { WikiData } from '../../__generated__/graphql';
 import { wikiDataToStringWithId } from '../../utils/wikiDataFunctions';
 import { useGetMedium } from '../../queries/useGetMedium';
 import { InfoBox, LanguageInfoBox, NoDataAvailable } from './InfoBox';
-import { Box, Container, CssBaseline, MenuItem, Paper, Select } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  MenuItem,
+  Paper,
+  Select
+} from '@mui/material';
 import { TranscriptBox } from './TranscriptBox';
 import language from 'react-syntax-highlighter/dist/esm/languages/hljs/1c';
 
@@ -26,7 +34,7 @@ export const DetailPage: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
 
   return (
     <>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<CircularProgress />}>
         <DetailPageContainer offset={offset} id={decodeURIComponent(mediumProps.mediumId.id)} />
       </Suspense>
     </>

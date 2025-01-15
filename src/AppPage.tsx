@@ -8,6 +8,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
+import { getUserSession } from './pages/integrationpage/IntegrationPage';
 
 const pagePathWithIcons = [
   { label: 'Search', path: 'search', icon: <SearchOutlinedIcon fontSize='large' /> },
@@ -20,6 +21,7 @@ const drawerWidthOpen = 240;
 const drawerWidthClosed = 64;
 
 const PageNavigation: React.FC = () => {
+  const user = getUserSession();
   const [isTextCollapsed, setTextCollapsed] = useState(false);
   const location = useLocation();
   const navigation = useNavigate();
