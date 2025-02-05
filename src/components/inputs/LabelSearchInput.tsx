@@ -54,13 +54,11 @@ export const LabelSearchInput = <R,>({
               const isSelected =
                 selectedOptions.find((opt) => isOptionEqualToValue(opt, option)) !== undefined;
               return (
-                <li key={key} {...optionProps} style={{ height: '24px', padding: '2px' }}>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 4 }}
-                    checked={isSelected}
-                  />
+                <li
+                  key={key}
+                  {...optionProps}
+                  style={{ height: 'auto', margin: '0px 0px', padding: '0px 0px' }}>
+                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={isSelected} />
                   {renderOption(option, isSelected)}
                 </li>
               );
@@ -88,7 +86,6 @@ export const LabelSearchInput = <R,>({
                 onDelete={() => {
                   const newSelectOptions = selectedOptions.filter((option) => option != value);
                   onChange(newSelectOptions);
-                  //onChange?.(newSelections);
                 }}
               />
             );

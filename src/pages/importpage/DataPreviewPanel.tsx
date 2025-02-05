@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { ParsedFile } from './ValidateDataPanel';
 import { StepBox } from './ImportStepper';
 import { ImportMedium } from './ImportPage';
-import { MediaGrid } from '../searchpage/MediaGridPanel';
+import { MediaCollection } from '../searchpage/MediaGridPanel';
 import { Box, Pagination, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { getUserSession } from '../integrationpage/IntegrationPage';
 import { WlpImportInput, WlpVideoInput } from '../../__generated__/graphql';
+import { MediumCard } from '../../components/MediumCard';
 
 interface Props {
   validFiles: ParsedFile[];
@@ -66,20 +67,22 @@ const DataPreviewGridView: React.FC<{ media: ImportMedium[] }> = ({ media }) => 
     <Grid
       container
       sx={{ alignItems: 'center', alignContent: 'center', flexDirection: 'column', gap: 1 }}>
-      <MediaGrid
-        media={media
-          .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
-          .map((importMedium, index) => ({
-            id: `D${index}`,
-            cursor: `${index}`,
-            type: importMedium.type,
-            channel: importMedium.reference[0].publishedBy ?? 'Unknown',
-            date: importMedium.publicationDate ?? 'Unknown',
-            duration: importMedium.duration,
-            thumbnail: new URL(importMedium.thumbnailURL),
-            title: importMedium.title
-          }))}
-      />
+      {media
+        .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
+        .map((importMedium, index) => ({
+          id: `D${index}`,
+          cursor: `${index}`,
+          type: importMedium.type,
+          channel: importMedium.reference[0].publishedBy ?? 'Unknown',
+          date: importMedium.publicationDate ?? 'Unknown',
+          duration: importMedium.duration,
+          thumbnail: new URL(importMedium.thumbnailURL),
+          title: importMedium.title
+        }))
+        .map((medium, index) => (
+          <MediumCard key={index} {...medium} />
+        ))}
+
       <Pagination
         count={Math.ceil(media.length / elementsPerPage)}
         color='primary'

@@ -34,7 +34,7 @@ const Title: React.FC<{ title: string }> = ({ title }: { title: string }) => (
 );
 
 const Channel: React.FC<{ title: string }> = ({ title }: { title: string }) => (
-  <Tooltip title={'DoctorWhatson'} placement='bottom'>
+  <Tooltip title={title} placement='bottom'>
     <Typography variant='body2' sx={{ color: '#606060', cursor: 'pointer' }}>
       {clip(title, '…', 20)}
     </Typography>
@@ -58,10 +58,10 @@ export const MediumCard = (props: MediumCardProp) => {
   return (
     <Link
       to={`../medium/${encodeURIComponent(props.id)}`}
-      style={{ textDecoration: 'none', color: 'inherit' }}>
+      style={{ textDecoration: 'none', color: 'inherit', width: '320px' }}>
       <MediumBadge type={props.type} />
       <Card
-        sx={{ minWidth: 320, maxWidth: 320, padding: '0px', borderRadius: '8px' }}
+        sx={{ minWidth: '320px', maxWidth: '320px', padding: '0px', borderRadius: '8px' }}
         variant='elevation'>
         <CardMedia
           component='img'

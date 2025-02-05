@@ -75,6 +75,7 @@ export const DetailPageContainer: React.FC<{ id: string; offset: number }> = ({ 
             educationUsage={undefined}
             educationlevel={undefined}
             thumbnail={thumbnailUrl}
+            mediumUrl={mediumUrl ? new URL(mediumUrl) : undefined}
           />
 
           <LanguageInfoBox spoken={data.languages ?? []} subtitles={data.subtitleLanguages ?? []} />

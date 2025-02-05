@@ -2,17 +2,19 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { ValueType, WikiData } from '../../__generated__/graphql';
 import { LocalDate } from '@js-joda/core';
 import Grid from '@mui/material/Grid2';
-import { Divider, Paper, SxProps, Theme, Typography } from '@mui/material';
+import { Divider, IconButton, Paper, SxProps, Theme, Typography } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import { WikiDataChip } from '../searchpage/FilterGroup';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { convertDuration } from '../../utils/duration';
 import { wikiDataToStringWithId } from '../../utils/wikiDataFunctions';
 
 interface InfoBoxProps {
   title?: string | null;
   thumbnail?: URL;
+  mediumUrl?: URL;
   categories?: WikiData[];
   publicationDate?: string;
   duration?: number;
@@ -48,7 +50,8 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
   educationUsage,
   educationlevel,
   publicationDate,
-  thumbnail
+  thumbnail,
+  mediumUrl
 }) => {
   return (
     <Grid container direction='column' sx={{ padding: '0px 0px' }} spacing={1}>
@@ -59,7 +62,9 @@ export const InfoBox: React.FC<InfoBoxProps> = ({
           width={'320px'}
           style={{ borderRadius: '12px' }}
         />
-        <LeftInfoBox {...{ title, categories, duration, educationlevel, educationUsage }} />
+        <LeftInfoBox
+          {...{ title, categories, duration, educationlevel, educationUsage, mediumUrl }}
+        />
       </Grid>
       <DescriptionBox {...{ date: publicationDate, description, duration }} viewHeight={100} />
     </Grid>
@@ -70,7 +75,8 @@ const LeftInfoBox: React.FC<InfoBoxProps> = ({
   title,
   categories,
   educationUsage,
-  educationlevel
+  educationlevel,
+  mediumUrl
 }) => {
   return (
     <Grid container direction='column' justifyContent={'space-between'}>
@@ -86,17 +92,25 @@ const LeftInfoBox: React.FC<InfoBoxProps> = ({
           <EducationBox {...{ educationlevel, educationUsage }} />
         ) : null}
       </Grid>
-      <Grid>
-        <Typography component={'span'} sx={{ mr: 0.5 }}>
-          Categories:
-        </Typography>
-        {categories?.map((category) => (
-          <WikiDataChip
-            key={wikiDataToStringWithId(category)}
-            wikiData={category}
-            overrideSx={{ mr: 0.5 }}
-          />
-        ))}
+      <Grid container justifyContent={'space-between'} alignItems={'baseline'}>
+        <Grid>
+          <Typography component={'span'} sx={{ mr: 0.5 }}>
+            Categories:
+          </Typography>
+          {categories?.map((category) => (
+            <WikiDataChip
+              key={wikiDataToStringWithId(category)}
+              wikiData={category}
+              overrideSx={{ mr: 0.5 }}
+            />
+          ))}
+        </Grid>
+        <Grid container alignItems={'center'}>
+          <Typography component={'span'}>Watch on:</Typography>
+          <IconButton onClick={() => window.open(mediumUrl)}>
+            <YouTubeIcon fontSize='large' sx={{ fill: '#ff0033' }} />
+          </IconButton>
+        </Grid>
       </Grid>
     </Grid>
   );

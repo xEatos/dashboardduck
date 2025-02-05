@@ -6,39 +6,26 @@ import { mapToWikiDataInput } from '../../utils/wikiDataFunctions';
 import { MediumCard } from '../../components/MediumCard';
 import Grid from '@mui/material/Grid2';
 import { ErrorBoundary } from 'react-error-boundary';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 
 export interface MediaGridProps {
   media: Medium[];
 }
 
-export const MediaGrid: React.FC<MediaGridProps> = ({ media }) => {
-  return (
-    <Grid
-      container
-      size={{ xs: 8 }}
-      gap={2}
-      spacing={2}
-      sx={{
-        padding: 2,
-        border: '0px solid red',
-        height: 'calc(100vh - 300px)',
-        overflowY: 'scroll'
-      }}>
-      {media.map((medium, index) => (
-        <MediumCard key={index} {...medium} />
-      ))}
-    </Grid>
-  );
-};
-
-const MediaGridWrapper: React.FC<{
+export const MediaCollection: React.FC<{
   first: number;
   after: string | undefined;
   fiterInput: FilterSelectionInput[];
 }> = ({ first, after, fiterInput }) => {
-  const data = useGetMedia(first, after, fiterInput);
-  return <MediaGrid media={data} />;
+  const media = useGetMedia(first, after, fiterInput);
+
+  return (
+    <>
+      {media.map((medium, index) => (
+        <MediumCard key={index} {...medium} />
+      ))}
+    </>
+  );
 };
 
 export const MediaGridPanel: React.FC = () => {
@@ -51,17 +38,10 @@ export const MediaGridPanel: React.FC = () => {
     }
   );
 
-  if (searchQuery.freeSolo && searchQuery.freeSolo.value.length > 0) {
-    filerSelectionInput.push({
-      filterId: 'Text',
-      literals: [{ value: searchQuery.freeSolo.value, type: ValueType.String }]
-    });
-  }
-
   return (
     <ErrorBoundary fallback={<p>Error to retrieve Media</p>}>
       <Suspense fallback={<CircularProgress />}>
-        <MediaGridWrapper first={50} after={undefined} fiterInput={filerSelectionInput} />
+        <MediaCollection first={50} after={undefined} fiterInput={filerSelectionInput} />
       </Suspense>
     </ErrorBoundary>
   );

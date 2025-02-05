@@ -13,6 +13,7 @@ export interface ValueRangeInputProps<T> {
   valueToLabel: (v: T) => React.ReactNode;
   disableSwap: boolean;
   onChange: (min: T, max: T) => void;
+  width?: string | number;
 }
 
 export const ValueRangeInput = <R,>({
@@ -25,7 +26,8 @@ export const ValueRangeInput = <R,>({
   valueToNumber,
   numberToValue,
   onChange,
-  disableSwap
+  disableSwap,
+  width
 }: ValueRangeInputProps<R>) => {
   const [values, setValues] = useState<R[]>([minValue, maxValue]);
 
@@ -34,27 +36,33 @@ export const ValueRangeInput = <R,>({
   }, [minValue, maxValue]);
 
   return (
-    <Box sx={{ width: '300px', padding: '4px 2px 2px 14px' }}>
+    <Box sx={{ padding: '2px 4px 4px 2px' }}>
       {label}
-      <Grid container direction='row' wrap='nowrap' spacing={2}>
-        <Typography>{valueToLabel(values[0])}</Typography>
-        <Slider
-          value={values.map((v) => valueToNumber(v))}
-          disableSwap={disableSwap}
-          min={valueToNumber(min)}
-          max={valueToNumber(max)}
-          onChange={(_, otherValues) => {
-            if (Array.isArray(otherValues)) {
-              setValues(otherValues.map((v) => numberToValue(v)));
-            }
-          }}
-          onChangeCommitted={(_, otherValues) => {
-            if (Array.isArray(otherValues)) {
-              onChange(numberToValue(otherValues[0]), numberToValue(otherValues[1]));
-            }
-          }}
-        />
-        <Typography>{valueToLabel(values[1])}</Typography>
+      <Grid container direction={'row'} size={{ xs: 12 }} alignItems={'center'}>
+        <Grid size={{ xs: 2 }} textAlign={'end'}>
+          <Typography>{valueToLabel(values[0])}</Typography>
+        </Grid>
+        <Grid size={{ xs: 8 }} sx={{ padding: '6px 16px 0px 16px' }}>
+          <Slider
+            value={values.map((v) => valueToNumber(v))}
+            disableSwap={disableSwap}
+            min={valueToNumber(min)}
+            max={valueToNumber(max)}
+            onChange={(_, otherValues) => {
+              if (Array.isArray(otherValues)) {
+                setValues(otherValues.map((v) => numberToValue(v)));
+              }
+            }}
+            onChangeCommitted={(_, otherValues) => {
+              if (Array.isArray(otherValues)) {
+                onChange(numberToValue(otherValues[0]), numberToValue(otherValues[1]));
+              }
+            }}
+          />
+        </Grid>
+        <Grid size={{ xs: 2 }} textAlign={'start'}>
+          <Typography>{valueToLabel(values[1])}</Typography>
+        </Grid>
       </Grid>
     </Box>
   );

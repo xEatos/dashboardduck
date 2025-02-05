@@ -19,17 +19,17 @@ const iso639_1Codes: string[] = [
 ];
 
 export class ISO639 {
-  id
+  id;
 
-  private constructor(id: string){
-    this.id = id
+  private constructor(id: string) {
+    this.id = id;
   }
 
-  static of(id :string){
-    return iso639_1Codes.includes(id) ? new ISO639(id) : undefined
+  static of(id: string) {
+    return new ISO639(id);
   }
 
-  toString(){
-    return this.id
+  toString() {
+    return this.id;
   }
 }

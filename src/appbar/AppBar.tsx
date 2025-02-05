@@ -2,7 +2,6 @@ import { AppBar, Toolbar, IconButton } from '@mui/material';
 import React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { SearchInput } from './SearchInput';
 import { useNavigate } from 'react-router-dom';
 
 export const DashboardAppBar: React.FC = () => {
@@ -15,10 +14,10 @@ export const DashboardAppBar: React.FC = () => {
           edge='start'
           onClick={() => {
             navigate('/');
-          }}>
+          }}
+          sx={{ mr: 'auto' }}>
           <DashboardIcon fontSize='large' sx={{ fill: 'white' }} />
         </IconButton>
-        <SearchInput sx={{ mr: 'auto' }} />
         <IconButton edge='end'>
           <AccountCircle fontSize='large' sx={{ fill: 'white' }} />
         </IconButton>

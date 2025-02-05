@@ -7,8 +7,8 @@ export const MediumBadge = ({ type }: { type: 'Video' | 'Podcast' }) => (
   <Box
     style={{
       position: 'relative',
-    }}
-  >
+      width: '320px'
+    }}>
     <Box
       style={{
         position: 'absolute',
@@ -16,25 +16,24 @@ export const MediumBadge = ({ type }: { type: 'Video' | 'Podcast' }) => (
         width: '32px',
         height: '32px',
         backgroundColor: 'rgba(0,0,0,0.6)',
-        borderRadius: '50%',
-      }}
-    >
+        borderRadius: '50%'
+      }}>
       {type === 'Video' ? (
         <VideoIcon
-          fontSize="small"
+          fontSize='small'
           style={{
             fill: 'white',
             position: 'absolute',
-            transform: 'translate(6.3px, 6px)',
+            transform: 'translate(6.3px, 6px)'
           }}
         />
       ) : (
         <Podcasts
-          fontSize="small"
+          fontSize='small'
           style={{
             fill: 'white',
             position: 'absolute',
-            transform: 'translate(6.3px, 6px)',
+            transform: 'translate(6.3px, 6px)'
           }}
         />
       )}

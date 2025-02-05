@@ -8,7 +8,7 @@ import {
   wikiDataToStringWithId
 } from '../../utils/wikiDataFunctions';
 import { LabelSearchInput } from '../../components/inputs/LabelSearchInput';
-import { WikiDataItem } from '../../components/WikiDataItem';
+import { WikiDataItem, WikiDataItemWitoutClip } from '../../components/WikiDataItem';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import React, { useContext } from 'react';
@@ -16,6 +16,7 @@ import { SearchQueryContext } from './SearchPage';
 import { DateInput } from '../../components/inputs/DateInput';
 import { ValueRangeInput } from '../../components/inputs/ValueRangeInput';
 import { convertDuration } from '../../utils/duration';
+import { FreeSoloInput } from '../../components/inputs/FreeSoloInput';
 
 const createLabelSearchInput = ({ filterId, label, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);
@@ -26,8 +27,8 @@ const createLabelSearchInput = ({ filterId, label, options }: FilterOption): Rea
       label={label}
       options={[...options]}
       isOptionEqualToValue={isSame}
-      getOptionLabel={(option) => wikiDataToStringWithId(option)}
-      renderOption={(option) => <WikiDataItem {...option} />}
+      getOptionLabel={wikiDataToStringWithId}
+      renderOption={(option) => <WikiDataItemWitoutClip {...option} />}
       renderChip={(option) => <WikiDataItem {...option} />}
       sortOption={(a, b) => {
         const r = compareWikiData(a, b);
@@ -89,37 +90,50 @@ const createCheckBox = (filter: FilterOption): React.ReactNode => {
   );
 };
 
-const createValueSlider = ({ filterId, label, options }: FilterOption): React.ReactNode => {
+const createValueSlider = ({ filterId, options }: FilterOption): React.ReactNode => {
   const query = useContext(SearchQueryContext);
-  const opt2 = tryCastToWikiDataLiteral(options[0]);
-  const zero: WikiData = {
-    __typename: 'WikiDataLiteral',
-    type: ValueType.Duration,
-    value: '0'
-  };
+  const min = tryCastToWikiDataLiteral(options[0]);
+  const max = tryCastToWikiDataLiteral(options[1]);
 
-  return (
+  return min && max && min?.value < max?.value ? (
     <ValueRangeInput
       disableSwap={true}
-      min={zero}
+      min={options[0]}
       max={options[1]}
-      minValue={query.filterInputs[filterId]?.[0] ?? zero}
+      minValue={query.filterInputs[filterId]?.[0] ?? options[0]}
       maxValue={query.filterInputs[filterId]?.[1] ?? options[1]}
       valueToNumber={(v) => Number(tryCastToWikiDataLiteral(v)?.value) ?? 0}
       numberToValue={(v) => {
         const a: WikiData = {
           __typename: 'WikiDataLiteral',
           value: v.toString(),
-          type: opt2?.type ?? ValueType.Number
+          type: ValueType.Number
         };
         return a;
       }}
       valueToLabel={(v) => {
-        const num = Number(tryCastToWikiDataLiteral(v)?.value) ?? 0;
+        const num = Number(tryCastToWikiDataLiteral(v)?.value) ?? min.value;
         return convertDuration(num);
       }}
       onChange={(min, max) => {
         query.updateFilter(filterId, [min, max]);
+      }}
+    />
+  ) : undefined;
+};
+
+export const createFreeTextInput = ({ filterId, label }: FilterOption): React.ReactNode => {
+  const query = useContext(SearchQueryContext);
+  const textData = query.filterInputs?.FreeText?.[0];
+
+  return (
+    <FreeSoloInput
+      label={label}
+      text={textData ? tryCastToWikiDataLiteral(textData)?.value : undefined}
+      onChange={(value) => {
+        query.updateFilter(filterId, [
+          { __typename: 'WikiDataLiteral', value: value, type: ValueType.String }
+        ]);
       }}
     />
   );
@@ -135,6 +149,10 @@ export const filterToInputFactory = (filter: FilterOption): React.ReactNode => {
       return createCheckBox(filter);
     case 'ValueSlider':
       return createValueSlider(filter);
+    /*
+    case 'TextInput':
+      return createFreeTextInput(filter);
+      */
     default:
       return null;
   }
