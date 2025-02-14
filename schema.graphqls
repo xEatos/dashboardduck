@@ -48,6 +48,14 @@ type FilterOption {
   group: String
 }
 
+type FilterSelection {
+  """
+  e.g. minDate, language
+  """
+  filterId: String!
+  data: [WikiData!]!
+}
+
 input FilterSelectionInput {
   """
   e.g. minDate, language
@@ -82,6 +90,16 @@ type LeanMedium {
   duration: Int
 }
 
+type MediaConnections {
+  media: [MediaPage!]!
+  foundFilters: [FilterSelection!]!
+}
+
+type MediaPage {
+  pageInfo: PageInfo!
+  edges: [MediumEdge!]
+}
+
 type Medium {
   id: ID!
   type: MediumType
@@ -97,13 +115,8 @@ type Medium {
   duration: Int
 }
 
-type MediumConnection {
-  pageInfo: PageInfo!
-  edges: [MediumEdge!]
-}
-
 type MediumEdge {
-  cursor: String!
+  cursor: Int!
   node: LeanMedium!
 }
 
@@ -146,18 +159,23 @@ type Mutation {
   createOrUpdateYoutubeKey(keyInput: UserYouTubeInput!): UserYouTubeKey!
   verifyUploadWlpVideosToWiki(wlpImport: WLPImportInput!): AuthenticationConsumerLink!
   startWlpVideosImport(userId: String!): UploadAnswer!
-  addMedia(media: [MediumInput!]!): MediumConnection
 }
 
 type NoConsumerRegistered {
   id: ID!
 }
 
+input OffsetPair {
+  provenance: String!
+  offset: Int!
+}
+
 type PageInfo {
-  hasPreviousPage: Boolean!
+  provenance: String!
   hasNextPage: Boolean!
-  startCursor: String
-  endCursor: String
+  hasPreviousPage: Boolean!
+  offset: Int!
+  limit: Int!
 }
 
 type Query {
@@ -167,7 +185,11 @@ type Query {
   isAuthenticated(userId: String!): AuthenticationAnswer!
   getUploadStatus(uploadId: String!): UploadAnswer!
   hasUserRunningImport(userId: String!): HasRunningJobsAnswer!
-  mediaConnections(first: Int!, after: String, filter: [FilterSelectionInput!]): MediumConnection
+  mediaConnections(
+    limit: Int!
+    offsetMap: [OffsetPair!]
+    filter: [FilterSelectionInput!]
+  ): MediaConnections
   filterOptions: [FilterOption!]!
   medium(mediumId: ID!): Medium
   transcriptChapters(transcriptIds: [ID!]!): [TranscriptText!]

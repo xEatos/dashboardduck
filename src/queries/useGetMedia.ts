@@ -8,18 +8,42 @@ import {
 } from '../__generated__/graphql';
 
 const GET_MEDIA = gql(`
-  query Media($first: Int!, $after: String, $filter: [FilterSelectionInput!],) {
-  mediaConnections(first: $first, after: $after, filter: $filter) {
-    edges {
-      node {
-        id
-        title
-        thumbnail
-        publication
-        duration
-        channel
+  query Media($limit: Int!, $offsetMap: [OffsetPair!], $filter: [FilterSelectionInput!]) {
+  mediaConnections(limit: $limit, filter: $filter, offsetMap: $offsetMap) {
+    foundFilters {
+      data {
+        ... on WikiDataResource {
+          id
+          label
+        }
+        ... on WikiDataLiteral {
+          lang
+          value
+          type
+        }
       }
-      cursor
+      filterId
+    }
+    media {
+      edges {
+        cursor
+        node {
+          channel
+          duration
+          id
+          publication
+          thumbnail
+          title
+          type
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        limit
+        offset
+        provenance
+      }
     }
   }
 }
