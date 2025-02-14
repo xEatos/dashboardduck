@@ -1,7 +1,8 @@
 import { Typography } from '@mui/material';
-import { WikiData } from '../__generated__/graphql';
+import { ValueType, WikiData } from '../__generated__/graphql';
 import { wikiDataToString } from '../utils/wikiDataFunctions';
 import { clip } from '../utils/clipString';
+import { ISO639 } from '../utils/iso639';
 
 export const BaseWikiDataItem: React.FC<WikiData> = (props) => {
   if (props.__typename === 'WikiDataResource') {
@@ -15,6 +16,8 @@ export const BaseWikiDataItem: React.FC<WikiData> = (props) => {
         </Typography>
       </span>
     );
+  } else if (props.__typename === 'WikiDataLiteral' && props.type === ValueType.Iso639) {
+    return <Typography>{ISO639.idToLanguage(props.value)}</Typography>;
   } else {
     return <Typography>{wikiDataToString(props)}</Typography>;
   }
