@@ -1,10 +1,14 @@
 import { useSuspenseQuery } from '@apollo/client';
 import { gql } from '../__generated__';
 import {
+  FilterSelection,
   FilterSelectionInput,
+  MediaConnections,
+  MediaPage,
   MediaQuery,
   MediaQueryVariables,
-  MediumEdge
+  MediumEdge,
+  OffsetPair
 } from '../__generated__/graphql';
 
 const GET_MEDIA = gql(`
@@ -49,40 +53,52 @@ const GET_MEDIA = gql(`
 }
 `);
 
-export interface Medium {
-  id: string;
-  cursor: string;
-  title: string;
-  channel: string;
-  date: string;
-  duration: number;
-  thumbnail: URL;
-  type: 'Video' | 'Podcast';
+//todo offset cache
+
+export const createOffsetMapForNextPage = (
+  mediaConnections: MediaConnections
+): Record<string, number> => {
+  return mediaConnections.media.reduce(
+    (acc, value) => ({
+      ...acc,
+      ...(value.pageInfo.hasNextPage
+        ? {
+            [value.pageInfo.provenance]:
+              value.edges?.[value.edges?.length - 1].cursor ??
+              value.pageInfo.offset + value.pageInfo.limit
+          }
+        : { [value.pageInfo.provenance]: value.pageInfo.offset + value.pageInfo.limit })
+    }),
+    {}
+  );
+};
+
+interface GetMediaAnswer {
+  foundFilters: FilterSelection[];
+  mediaPages: MediaPage[];
+  nextPageOffsetMap: Record<string, number>;
 }
 
-const toModel = ({ cursor, node }: MediumEdge): Medium => ({
-  id: node.id,
-  cursor: cursor,
-  title: node.title ?? '',
-  channel: node.channel ?? '',
-  date: node.publication ?? '',
-  duration: node.duration ?? NaN,
-  thumbnail: new URL(node.thumbnail ?? ''),
-  type: 'Video'
-});
-
 export const useGetMedia = (
-  first: number,
-  after: string | undefined,
-  filter: FilterSelectionInput[]
-): Medium[] => {
+  limit: number,
+  offsetMap: OffsetPair[] | undefined,
+  filter: FilterSelectionInput[] | undefined
+  //onFoundFiltersChange: (foundFilters: FilterSelection[]) => void,
+  //setPaginationData: (otherOffsetMap: Record<string, number>) => void,
+): GetMediaAnswer => {
   const { data } = useSuspenseQuery<MediaQuery, MediaQueryVariables>(GET_MEDIA, {
     variables: {
-      first,
-      after,
+      limit,
+      offsetMap,
       filter
     }
   });
 
-  return data.mediaConnections?.edges?.map((edge) => toModel(edge)) ?? [];
+  return {
+    foundFilters: data.mediaConnections?.foundFilters ?? [],
+    mediaPages: data.mediaConnections?.media ?? [],
+    nextPageOffsetMap: data.mediaConnections
+      ? createOffsetMapForNextPage(data.mediaConnections)
+      : {}
+  };
 };

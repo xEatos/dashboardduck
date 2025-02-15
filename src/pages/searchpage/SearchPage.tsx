@@ -35,6 +35,7 @@ export interface SearchQueryValues {
 export interface SearchQuery extends SearchQueryValues {
   updateFilter: (filterId: string | 'FreeText', data: WikiData[]) => void;
 }
+
 export const SearchQueryContext = createContext<SearchQuery>({
   filterInputs: {},
   updateFilter: (_) => {}
@@ -54,7 +55,6 @@ export const searchLoader: LoaderFunction<SearchLoaderData> = (context): Partial
 };
 
 const mapPathToSearchQueryValues = ({ search }: Partial<Path>): SearchQueryValues => {
-  console.log('search:', search);
   return search
     ? {
         filterInputs: search
@@ -98,21 +98,15 @@ export const SearchPage: React.FC = () => {
     navigate(mapSearchQueryValuesToPath(newQueryValues));
   };
 
-  console.log(screen.availWidth);
   return (
     <SearchQueryContext.Provider value={{ ...queryValues, updateFilter }}>
-      <Grid container direction='row' size={{ xs: 12 }}>
-        <Grid size={{ xs: screen.availWidth > 1920 ? 3 : 3.5 }}>
-          <Suspense fallback={<CircularProgress />}>
+      <Grid container direction='row' sx={{ flexWrap: 'nowrap' }}>
+        <Suspense fallback={<CircularProgress />}>
+          <Grid container sx={{ minWidth: 'auto' }}>
             <FilterPanel />
-          </Suspense>
-        </Grid>
-        <Grid
-          size={{ xs: screen.availWidth > 1920 ? 9 : 8.5 }}
-          container
-          direction='row'
-          spacing={2}
-          sx={{ paddingTop: 2 }}>
+          </Grid>
+        </Suspense>
+        <Grid container direction='row' spacing={2}>
           <MediaGridPanel />
         </Grid>
       </Grid>

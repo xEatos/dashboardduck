@@ -42,7 +42,7 @@ export const LabelSearchInput = <R,>({
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
           {label}:
           <Autocomplete
-            sx={{ flexGrow: 1, minWidth: '250px' }}
+            sx={{ flexGrow: 1 }}
             multiple
             value={selectedOptions}
             isOptionEqualToValue={isOptionEqualToValue}
@@ -70,6 +70,7 @@ export const LabelSearchInput = <R,>({
             renderInput={(params) => (
               <TextField
                 {...params}
+                hiddenLabel
                 size='small'
                 placeholder={`Selected: ${selectedOptions.length}`}
               />
