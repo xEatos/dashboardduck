@@ -68,6 +68,8 @@ export const MediaCollection: React.FC<{
     setPagination(defaultPagination);
   }, [filterInput]);
 
+  console.log('mediaPages:', mediaPages);
+
   return (
     <Grid container direction={'column'} sx={{ marginTop: '12px' }}>
       <Grid container>
@@ -169,7 +171,6 @@ const MediaPagesPagination: React.FC<{
   pageInfos: PageInfo[]; // from current query of pagination.current
   jump: (targetPagination: MediaPageState) => void;
 }> = ({ pagination, offsetMap, pageInfos, jump }) => {
-  console.log('pageInfos:', pageInfos, 'hasNextPage', hasNextPage(pageInfos));
   const _pageination: MediaPageState = {
     ...pagination,
     metaData: {
@@ -194,7 +195,7 @@ const MediaPagesPagination: React.FC<{
   return (
     <Pagination
       page={_pageination.current}
-      count={Math.max(count - 1, 1)}
+      count={Math.max(count)}
       siblingCount={1}
       boundaryCount={1}
       onChange={(_, targetPage) => {
