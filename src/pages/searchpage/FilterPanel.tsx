@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { FilterOption } from '../../__generated__/graphql';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, IconButton, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FitlerGroup } from './FilterGroup';
 import { useGetMediaFilters } from '../../queries/useGetMediaFilters';
 import { FreeSoloInput } from '../../components/inputs/FreeSoloInput';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { createFreeTextInput } from './InputFactory';
 import { SearchQueryContext } from './SearchPage';
 
@@ -29,6 +30,7 @@ const groupFilterOptionById = (filterOpts: FilterOption[]): FilterOptionGroup =>
 
 export const FilterPanel: React.FC = () => {
   const data = useGetMediaFilters();
+  const query = useContext(SearchQueryContext);
 
   const groupedFilterOptions = groupFilterOptionById(data);
   //console.log('groupedFilterOptions:', groupedFilterOptions);
@@ -50,7 +52,22 @@ export const FilterPanel: React.FC = () => {
             scrollbarColor: '#1976d2 #e4e4e4',
             scrollbarWidth: 'thin'
           }}>
-          <Typography>Faceted Search:</Typography>
+          <Grid
+            container
+            sx={{
+              flexGrow: 1,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              margin: '0px 6px'
+            }}>
+            <Typography>Faceted Search:</Typography>
+            <IconButton
+              onClick={() => {
+                query.resetFilters(['FreeText']);
+              }}>
+              <DeleteOutlineIcon />
+            </IconButton>
+          </Grid>
           {groupedFilterOptions &&
             Object.entries(groupedFilterOptions).map(([header, fopts]) =>
               header === 'Search' ? undefined : (

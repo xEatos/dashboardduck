@@ -34,11 +34,13 @@ export interface SearchQueryValues {
 
 export interface SearchQuery extends SearchQueryValues {
   updateFilter: (filterId: string | 'FreeText', data: WikiData[]) => void;
+  resetFilters: (expect: string[]) => void;
 }
 
 export const SearchQueryContext = createContext<SearchQuery>({
   filterInputs: {},
-  updateFilter: (_) => {}
+  updateFilter: (_) => {},
+  resetFilters: (_) => {}
 });
 
 export interface SearchLoaderData {
@@ -88,7 +90,7 @@ export const SearchPage: React.FC = () => {
   const navigate = useNavigate();
 
   const queryValues: SearchQueryValues = mapPathToSearchQueryValues(urlSearchParams);
-  //console.log('QueryValues:', queryValues);
+  console.log('QueryValues:', queryValues);
 
   const updateFilter = (filterId: string, data: WikiData[]) => {
     const newQueryValues: SearchQueryValues = {
@@ -98,8 +100,18 @@ export const SearchPage: React.FC = () => {
     navigate(mapSearchQueryValuesToPath(newQueryValues));
   };
 
+  const resetFilters = (expect /*filterIds */ : string[]) => {
+    navigate(
+      mapSearchQueryValuesToPath({
+        filterInputs: Object.fromEntries(
+          Object.entries(queryValues.filterInputs).filter(([fsId]) => expect.includes(fsId))
+        )
+      })
+    );
+  };
+
   return (
-    <SearchQueryContext.Provider value={{ ...queryValues, updateFilter }}>
+    <SearchQueryContext.Provider value={{ ...queryValues, updateFilter, resetFilters }}>
       <Grid container direction='row' sx={{ flexWrap: 'nowrap' }}>
         <Suspense fallback={<CircularProgress />}>
           <Grid container sx={{ minWidth: 'auto' }}>

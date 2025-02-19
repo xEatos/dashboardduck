@@ -71,7 +71,7 @@ export const MediaCollection: React.FC<{
   console.log('mediaPages:', mediaPages);
 
   return (
-    <Grid container direction={'column'} sx={{ marginTop: '12px' }}>
+    <Grid container direction={'column'} sx={{ marginTop: '6px' }}>
       <Grid container>
         <FilterAlert filters={foundFilters} />
       </Grid>
@@ -110,10 +110,9 @@ export const FilterAlert: React.FC<{ filters: FilterSelection[] }> = ({ filters 
   const query = useContext(SearchQueryContext);
 
   return filters.length > 0 ? (
-    <Alert severity='info' sx={{ margin: '4px' }}>
-      <Typography variant='caption'>
-        We also found some faceted filter inputs, if you meant to search for content based on this
-        filters instead of text add them to your filters
+    <Alert severity='info' sx={{ margin: '6px' }}>
+      <Typography variant='caption' sx={{ fontSize: '0.85rem' }}>
+        We also found these filters for your text search!
       </Typography>
       <Grid container sx={{ flexDirection: 'column' }}>
         {Object.entries(
@@ -139,7 +138,7 @@ export const FilterAlert: React.FC<{ filters: FilterSelection[] }> = ({ filters 
                 key={wikiDataToStringWithId(it) + filterId}
                 wikiData={it}
                 height='24px'
-                overrideSx={{ margin: '0px 2px' }}
+                overrideSx={{ margin: '2px 2px' }}
                 overrideIcon={<AddCircle />}
                 onDelete={() => {
                   query.updateFilter(filterId, [...(query.filterInputs[filterId] ?? []), it]);
