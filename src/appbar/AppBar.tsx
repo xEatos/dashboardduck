@@ -4,12 +4,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useNavigate } from 'react-router-dom';
 import { Task, TaskPopper } from '../components/TaskPopper';
 import TaskIcon from '@mui/icons-material/Task';
+import dashboardDuckLogo from '../assets/1_1_transparent.png';
 
 const defaultTasks = [
   {
     label: 'A1',
     content:
-      'Suche nach einem Video mit dem Title: Achim Spiller: Nachhaltige Ernährung - Ringvorlesung "Tier oder Tofu? Was isst die Zukunft?"'
+      'Suche nach einem Video mit dem Titel: Achim Spiller: Nachhaltige Ernährung - Ringvorlesung "Tier oder Tofu? Was isst die Zukunft?"'
   },
   {
     label: 'A2',
@@ -62,16 +63,27 @@ export const DashboardAppBar: React.FC = () => {
   };
 
   return (
-    <AppBar position='fixed' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar
+      position='fixed'
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        '& .MuiToolbar-root': { padding: '0px 8px' }
+      }}>
       <Toolbar>
-        <IconButton
-          edge='start'
+        <img
+          src={dashboardDuckLogo}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '25%',
+            padding: '2px',
+            marginRight: 'auto'
+          }}
+          width={51}
+          alt='ConsumerRights'
           onClick={() => {
             navigate('/');
           }}
-          sx={{ mr: 'auto' }}>
-          <DashboardIcon fontSize='large' sx={{ fill: 'white' }} />
-        </IconButton>
+        />
         <IconButton onClick={handleOnClick} edge='end'>
           <TaskIcon fontSize='large' sx={{ fill: 'white' }} />
         </IconButton>

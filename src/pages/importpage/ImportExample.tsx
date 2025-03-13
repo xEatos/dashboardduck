@@ -92,7 +92,7 @@ export const ImportExamplePanel: React.FC = () => {
             height: '24px',
             textDecoration: 'underline'
           }}>
-          Schema in Typscript
+          Schema in Typescript
         </Typography>
         <SyntaxHighlighter
           language='typescript'
