@@ -3,21 +3,24 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
+  FormControl,
   IconButton,
+  InputAdornment,
   TextField,
   Typography
 } from '@mui/material';
 import React, { useEffect, useId, useState } from 'react';
 import Grid from '@mui/material/Grid2';
-import { SearchOutlined } from '@mui/icons-material';
+import { Clear, SearchOutlined } from '@mui/icons-material';
 
 export interface FreeSoloProps {
   label: string;
   text: string | undefined;
   onChange?: (value: string) => void;
+  onClear?: () => void;
 }
 
-export const FreeSoloInput: React.FC<FreeSoloProps> = ({ text, onChange }) => {
+export const FreeSoloInput: React.FC<FreeSoloProps> = ({ text, onChange, onClear }) => {
   const id = useId();
   const [internalText, setInternalText] = useState(text);
 
@@ -31,13 +34,13 @@ export const FreeSoloInput: React.FC<FreeSoloProps> = ({ text, onChange }) => {
       flexDirection={'row'}
       wrap='nowrap'
       sx={{
-        width: '400px',
         padding: '8px 8px 8px 16px',
         border: '1px solid grey',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        width: '400px'
       }}
       alignItems={'center'}>
-      <Grid flexGrow={1}>
+      <Grid container flexGrow={1}>
         <TextField
           id={id}
           hiddenLabel
@@ -58,6 +61,21 @@ export const FreeSoloInput: React.FC<FreeSoloProps> = ({ text, onChange }) => {
               onChange?.(internalText ?? '');
             }
           }}
+          {...(onClear
+            ? {
+                slotProps: {
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton aria-label='clear' onClick={onClear} edge='end'>
+                          {<Clear />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }
+                }
+              }
+            : {})}
         />
       </Grid>
       <Grid>

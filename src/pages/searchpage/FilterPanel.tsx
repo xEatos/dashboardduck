@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { FilterOption } from '../../__generated__/graphql';
-import { Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, IconButton, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FitlerGroup } from './FilterGroup';
 import { useGetMediaFilters } from '../../queries/useGetMediaFilters';
 import { FreeSoloInput } from '../../components/inputs/FreeSoloInput';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { createFreeTextInput } from './InputFactory';
 import { SearchQueryContext } from './SearchPage';
 
@@ -29,29 +30,58 @@ const groupFilterOptionById = (filterOpts: FilterOption[]): FilterOptionGroup =>
 
 export const FilterPanel: React.FC = () => {
   const data = useGetMediaFilters();
+  const query = useContext(SearchQueryContext);
 
   const groupedFilterOptions = groupFilterOptionById(data);
   //console.log('groupedFilterOptions:', groupedFilterOptions);
 
   return (
-    <Grid container direction='column' spacing={2.5} sx={{ padding: 2 }}>
-      {createFreeTextInput(groupedFilterOptions.Search[0])}
-      <Divider sx={{ width: '400px' }} orientation='horizontal' />
-      <Typography>Faceted Search:</Typography>
-      {groupedFilterOptions &&
-        Object.entries(groupedFilterOptions).map(([header, fopts]) =>
-          header === 'Search' ? undefined : (
-            <FitlerGroup
-              key={header}
-              header={
-                <Typography variant='h6' sx={{ paddingLeft: 0.75 }}>
-                  {header}
-                </Typography>
-              }
-              filterOptions={fopts}
-            />
-          )
-        )}
+    <Grid container direction='column' sx={{ padding: '12px', maxWidth: '440px' }} spacing={'8px'}>
+      <Grid container>{createFreeTextInput(groupedFilterOptions.Search[0])}</Grid>
+      <Grid container>
+        <Divider sx={{ width: '420px' }} orientation='horizontal' />
+      </Grid>
+      <Grid
+        container
+        sx={{
+          flexGrow: 1,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          margin: '0px 6px'
+        }}>
+        <Typography>Faceted Search:</Typography>
+        <IconButton
+          onClick={() => {
+            query.resetFilters(['FreeText']);
+          }}>
+          <DeleteOutlineIcon />
+        </IconButton>
+      </Grid>
+      <Grid
+        container
+        spacing={'12px'}
+        sx={{
+          flex: '1 1 auto',
+          overflowY: 'auto',
+          height: `calc(100vh - 212px)`,
+          scrollbarColor: '#1976d2 #e4e4e4',
+          scrollbarWidth: 'thin'
+        }}>
+        {groupedFilterOptions &&
+          Object.entries(groupedFilterOptions).map(([header, fopts]) =>
+            header === 'Search' ? undefined : (
+              <FitlerGroup
+                key={header}
+                header={
+                  <Typography variant='h6' sx={{ paddingLeft: 0.75 }}>
+                    {header}
+                  </Typography>
+                }
+                filterOptions={fopts}
+              />
+            )
+          )}
+      </Grid>
     </Grid>
   );
 };

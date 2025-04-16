@@ -34,10 +34,13 @@ export interface SearchQueryValues {
 
 export interface SearchQuery extends SearchQueryValues {
   updateFilter: (filterId: string | 'FreeText', data: WikiData[]) => void;
+  resetFilters: (expect: string[]) => void;
 }
+
 export const SearchQueryContext = createContext<SearchQuery>({
   filterInputs: {},
-  updateFilter: (_) => {}
+  updateFilter: (_) => {},
+  resetFilters: (_) => {}
 });
 
 export interface SearchLoaderData {
@@ -54,7 +57,6 @@ export const searchLoader: LoaderFunction<SearchLoaderData> = (context): Partial
 };
 
 const mapPathToSearchQueryValues = ({ search }: Partial<Path>): SearchQueryValues => {
-  console.log('search:', search);
   return search
     ? {
         filterInputs: search
@@ -88,7 +90,7 @@ export const SearchPage: React.FC = () => {
   const navigate = useNavigate();
 
   const queryValues: SearchQueryValues = mapPathToSearchQueryValues(urlSearchParams);
-  //console.log('QueryValues:', queryValues);
+  console.log('QueryValues:', queryValues);
 
   const updateFilter = (filterId: string, data: WikiData[]) => {
     const newQueryValues: SearchQueryValues = {
@@ -98,21 +100,25 @@ export const SearchPage: React.FC = () => {
     navigate(mapSearchQueryValuesToPath(newQueryValues));
   };
 
-  console.log(screen.availWidth);
+  const resetFilters = (expect /*filterIds */ : string[]) => {
+    navigate(
+      mapSearchQueryValuesToPath({
+        filterInputs: Object.fromEntries(
+          Object.entries(queryValues.filterInputs).filter(([fsId]) => expect.includes(fsId))
+        )
+      })
+    );
+  };
+
   return (
-    <SearchQueryContext.Provider value={{ ...queryValues, updateFilter }}>
-      <Grid container direction='row' size={{ xs: 12 }}>
-        <Grid size={{ xs: screen.availWidth > 1920 ? 3 : 3.5 }}>
-          <Suspense fallback={<CircularProgress />}>
+    <SearchQueryContext.Provider value={{ ...queryValues, updateFilter, resetFilters }}>
+      <Grid container direction='row' sx={{ flexWrap: 'nowrap' }}>
+        <Suspense fallback={<CircularProgress />}>
+          <Grid container sx={{ minWidth: 'auto' }}>
             <FilterPanel />
-          </Suspense>
-        </Grid>
-        <Grid
-          size={{ xs: screen.availWidth > 1920 ? 9 : 8.5 }}
-          container
-          direction='row'
-          spacing={2}
-          sx={{ paddingTop: 2 }}>
+          </Grid>
+        </Suspense>
+        <Grid container direction='row' spacing={2}>
           <MediaGridPanel />
         </Grid>
       </Grid>

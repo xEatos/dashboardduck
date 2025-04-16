@@ -64,32 +64,41 @@ const DataPreviewGridView: React.FC<{ media: ImportMedium[] }> = ({ media }) => 
   const [page, setPage] = useState(0);
 
   return (
-    <Grid
-      container
-      sx={{ alignItems: 'center', alignContent: 'center', flexDirection: 'column', gap: 1 }}>
-      {media
-        .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
-        .map((importMedium, index) => ({
-          id: `D${index}`,
-          cursor: `${index}`,
-          type: importMedium.type,
-          channel: importMedium.reference[0].publishedBy ?? 'Unknown',
-          date: importMedium.publicationDate ?? 'Unknown',
-          duration: importMedium.duration,
-          thumbnail: new URL(importMedium.thumbnailURL),
-          title: importMedium.title
-        }))
-        .map((medium, index) => (
-          <MediumCard key={index} {...medium} />
-        ))}
-
-      <Pagination
-        count={Math.ceil(media.length / elementsPerPage)}
-        color='primary'
-        onChange={(_, value) => {
-          setPage(value - 1);
-        }}
-      />
+    <Grid>
+      <Grid
+        container
+        sx={{
+          overflowY: 'auto',
+          height: 'calc(100vh - 268px)',
+          scrollbarColor: '#1976d2 #e4e4e4',
+          scrollbarWidth: 'thin',
+          gap: 1
+        }}>
+        {media
+          .slice(page * elementsPerPage, (page + 1) * elementsPerPage)
+          .map((importMedium, index) => ({
+            id: `D${index}`,
+            cursor: `${index}`,
+            type: importMedium.type,
+            channel: importMedium.reference[0].publishedBy ?? 'Unknown',
+            date: importMedium.publicationDate ?? 'Unknown',
+            duration: importMedium.duration,
+            thumbnail: new URL(importMedium.thumbnailURL),
+            title: importMedium.title
+          }))
+          .map((medium, index) => (
+            <MediumCard key={index} {...medium} />
+          ))}
+      </Grid>
+      <Grid container sx={{ justifyContent: 'center', padding: '8px' }}>
+        <Pagination
+          count={Math.ceil(media.length / elementsPerPage)}
+          color='primary'
+          onChange={(_, value) => {
+            setPage(value - 1);
+          }}
+        />
+      </Grid>
     </Grid>
   );
 };

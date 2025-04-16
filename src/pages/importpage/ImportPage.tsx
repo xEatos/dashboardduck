@@ -131,7 +131,7 @@ const ImportPageContent: React.FC<User> = ({ userId }) => {
           page: <UploadPanel {...{ uploadedFiles, setUploadedFiles }} />
         },
         {
-          label: 'Validate Data Check',
+          label: 'Validate Data',
           page: <ValidateDataPanel files={uploadedFiles} setValidFiles={setValidFiles} />
         },
         {
@@ -139,7 +139,7 @@ const ImportPageContent: React.FC<User> = ({ userId }) => {
           page: <DataPreviewPanel validFiles={validFiles} sendImportData={handleSendImportData} />
         },
         {
-          label: 'Authenticate BN Wikibase Account',
+          label: 'Authorize',
           page: <AuthenticatePanel link={verifyLink} startUpload={handleStartImport} />
         },
         {

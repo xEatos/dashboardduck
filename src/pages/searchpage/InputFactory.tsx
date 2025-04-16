@@ -135,6 +135,9 @@ export const createFreeTextInput = ({ filterId, label }: FilterOption): React.Re
           { __typename: 'WikiDataLiteral', value: value, type: ValueType.String }
         ]);
       }}
+      onClear={() => {
+        query.updateFilter(filterId, []);
+      }}
     />
   );
 };

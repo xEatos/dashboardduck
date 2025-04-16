@@ -62,6 +62,7 @@ export interface WikiDataChipProps {
   onDelete?: () => void;
   height?: string;
   overrideSx?: SxProps<Theme>;
+  overrideIcon?: JSX.Element;
 }
 
 export const WikiDataChip: React.FC<WikiDataChipProps> = ({
@@ -69,7 +70,8 @@ export const WikiDataChip: React.FC<WikiDataChipProps> = ({
   subLabel,
   overrideSx,
   height,
-  onDelete
+  onDelete,
+  overrideIcon
 }) => {
   return (
     <Chip
@@ -90,6 +92,7 @@ export const WikiDataChip: React.FC<WikiDataChipProps> = ({
         )
       }
       {...(onDelete ? { onDelete: onDelete } : {})}
+      {...(overrideIcon ? { deleteIcon: overrideIcon } : {})}
     />
   );
 };

@@ -9,7 +9,8 @@ import { ImportPage } from './pages/importpage/ImportPage';
 import { IntegrationPage } from './pages/integrationpage/IntegrationPage';
 
 export const client = new ApolloClient({
-  uri: 'http://localhost:4000/',
+  //uri: 'http://localhost:4000/',
+  uri: 'https://7241-130-75-236-134.ngrok-free.app/',
   cache: new InMemoryCache()
 });
 

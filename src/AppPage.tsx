@@ -8,13 +8,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccountsOutlined';
 import { getUserSession } from './pages/integrationpage/IntegrationPage';
 
 const pagePathWithIcons = [
   { label: 'Search', path: 'search', icon: <SearchOutlinedIcon fontSize='large' /> },
   { label: 'Import', path: 'import', icon: <ImportExportOutlinedIcon fontSize='large' /> },
   //{ label: 'TestPage', path: 'test', icon: <BugReportOutlinedIcon fontSize='large' /> },
-  { label: 'Integration', path: 'integration', icon: <BugReportOutlinedIcon fontSize='large' /> }
+  { label: 'Integration', path: 'integration', icon: <ManageAccountsIcon fontSize='large' /> }
 ];
 
 const drawerWidthOpen = 240;
@@ -22,7 +23,7 @@ const drawerWidthClosed = 64;
 
 const PageNavigation: React.FC = () => {
   const user = getUserSession();
-  const [isTextCollapsed, setTextCollapsed] = useState(false);
+  const [isTextCollapsed, setTextCollapsed] = useState(true);
   const location = useLocation();
   const navigation = useNavigate();
   const [currentLocation, setCurrentLocation] = useState(location);

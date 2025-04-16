@@ -54,6 +54,13 @@ export type FilterOption = {
   options: Array<WikiData>;
 };
 
+export type FilterSelection = {
+  __typename?: 'FilterSelection';
+  data: Array<WikiData>;
+  /** e.g. minDate, language */
+  filterId: Scalars['String']['output'];
+};
+
 export type FilterSelectionInput = {
   /** e.g. minDate, language */
   filterId: Scalars['String']['input'];
@@ -82,6 +89,18 @@ export type LeanMedium = {
   type?: Maybe<MediumType>;
 };
 
+export type MediaConnections = {
+  __typename?: 'MediaConnections';
+  foundFilters: Array<FilterSelection>;
+  media: Array<MediaPage>;
+};
+
+export type MediaPage = {
+  __typename?: 'MediaPage';
+  edges?: Maybe<Array<MediumEdge>>;
+  pageInfo: PageInfo;
+};
+
 export type Medium = {
   __typename?: 'Medium';
   caption?: Maybe<Caption>;
@@ -98,15 +117,9 @@ export type Medium = {
   type?: Maybe<MediumType>;
 };
 
-export type MediumConnection = {
-  __typename?: 'MediumConnection';
-  edges?: Maybe<Array<MediumEdge>>;
-  pageInfo: PageInfo;
-};
-
 export type MediumEdge = {
   __typename?: 'MediumEdge';
-  cursor: Scalars['String']['output'];
+  cursor: Scalars['Int']['output'];
   node: LeanMedium;
 };
 
@@ -145,17 +158,11 @@ export enum MediumType {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addMedia?: Maybe<MediumConnection>;
   createOrUpdateConsumer: UserConsumer;
   createOrUpdateYoutubeKey: UserYouTubeKey;
   createUser: User;
   startWlpVideosImport: UploadAnswer;
   verifyUploadWlpVideosToWiki: AuthenticationConsumerLink;
-};
-
-
-export type MutationAddMediaArgs = {
-  media: Array<MediumInput>;
 };
 
 
@@ -188,12 +195,18 @@ export type NoConsumerRegistered = {
   id: Scalars['ID']['output'];
 };
 
+export type OffsetPair = {
+  offset: Scalars['Int']['input'];
+  provenance: Scalars['String']['input'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
   hasPreviousPage: Scalars['Boolean']['output'];
-  startCursor?: Maybe<Scalars['String']['output']>;
+  limit: Scalars['Int']['output'];
+  offset: Scalars['Int']['output'];
+  provenance: Scalars['String']['output'];
 };
 
 export type Query = {
@@ -206,7 +219,7 @@ export type Query = {
   getYouTubeVideosData?: Maybe<Array<LeanMedium>>;
   hasUserRunningImport: HasRunningJobsAnswer;
   isAuthenticated: AuthenticationAnswer;
-  mediaConnections?: Maybe<MediumConnection>;
+  mediaConnections?: Maybe<MediaConnections>;
   medium?: Maybe<Medium>;
   transcriptChapters?: Maybe<Array<TranscriptText>>;
 };
@@ -249,9 +262,9 @@ export type QueryIsAuthenticatedArgs = {
 
 
 export type QueryMediaConnectionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Array<FilterSelectionInput>>;
-  first: Scalars['Int']['input'];
+  limit: Scalars['Int']['input'];
+  offsetMap?: InputMaybe<Array<OffsetPair>>;
 };
 
 
@@ -429,13 +442,13 @@ export type HasUserRunningImportQueryVariables = Exact<{
 export type HasUserRunningImportQuery = { __typename?: 'Query', hasUserRunningImport: { __typename?: 'HasRunningJobsAnswer', uploadId: string, message: string } };
 
 export type MediaQueryVariables = Exact<{
-  first: Scalars['Int']['input'];
-  after?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+  offsetMap?: InputMaybe<Array<OffsetPair> | OffsetPair>;
   filter?: InputMaybe<Array<FilterSelectionInput> | FilterSelectionInput>;
 }>;
 
 
-export type MediaQuery = { __typename?: 'Query', mediaConnections?: { __typename?: 'MediumConnection', edges?: Array<{ __typename?: 'MediumEdge', cursor: string, node: { __typename?: 'LeanMedium', id: string, title?: string | null, thumbnail?: string | null, publication?: string | null, duration?: number | null, channel?: string | null } }> | null } | null };
+export type MediaQuery = { __typename?: 'Query', mediaConnections?: { __typename?: 'MediaConnections', foundFilters: Array<{ __typename?: 'FilterSelection', filterId: string, data: Array<{ __typename?: 'WikiDataLiteral', lang?: string | null, value: string, type: ValueType } | { __typename?: 'WikiDataResource', id: string, label: string }> }>, media: Array<{ __typename?: 'MediaPage', edges?: Array<{ __typename?: 'MediumEdge', cursor: number, node: { __typename?: 'LeanMedium', channel?: string | null, duration?: number | null, id: string, publication?: string | null, thumbnail?: string | null, title?: string | null, type?: MediumType | null } }> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, limit: number, offset: number, provenance: string } }> } | null };
 
 export type FilterOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -499,7 +512,7 @@ export const SetYouTubeKeyDocument = {"kind":"Document","definitions":[{"kind":"
 export const StartWlpVideosImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartWlpVideosImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startWlpVideosImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<StartWlpVideosImportMutation, StartWlpVideosImportMutationVariables>;
 export const VerifyUploadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"verifyUpload"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wlpImport"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"WLPImportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyUploadWlpVideosToWiki"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wlpImport"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wlpImport"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<VerifyUploadMutation, VerifyUploadMutationVariables>;
 export const HasUserRunningImportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HasUserRunningImport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasUserRunningImport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadId"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<HasUserRunningImportQuery, HasUserRunningImportQueryVariables>;
-export const MediaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Media"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FilterSelectionInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mediaConnections"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"publication"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"channel"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}}]}}]}}]} as unknown as DocumentNode<MediaQuery, MediaQueryVariables>;
+export const MediaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Media"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offsetMap"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OffsetPair"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FilterSelectionInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mediaConnections"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"offsetMap"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offsetMap"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"foundFilters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataResource"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataLiteral"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lang"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"filterId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"media"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channel"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publication"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"offset"}},{"kind":"Field","name":{"kind":"Name","value":"provenance"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MediaQuery, MediaQueryVariables>;
 export const FilterOptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FilterOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filterOptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filterId"}},{"kind":"Field","name":{"kind":"Name","value":"filterType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"options"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataResource"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataLiteral"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"lang"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FilterOptionsQuery, FilterOptionsQueryVariables>;
 export const SingleMediumDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SingleMedium"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mediumId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"medium"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"mediumId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mediumId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"publication"}},{"kind":"Field","name":{"kind":"Name","value":"languages"}},{"kind":"Field","name":{"kind":"Name","value":"channel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataResource"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataLiteral"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lang"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail"}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataResource"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WikiDataLiteral"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"lang"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"subtitleLanguages"}},{"kind":"Field","name":{"kind":"Name","value":"duration"}},{"kind":"Field","name":{"kind":"Name","value":"transcripts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"heading"}},{"kind":"Field","name":{"kind":"Name","value":"startTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"endTimestamp"}}]}},{"kind":"Field","name":{"kind":"Name","value":"language"}}]}},{"kind":"Field","name":{"kind":"Name","value":"caption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}}]}}]}}]}}]} as unknown as DocumentNode<SingleMediumQuery, SingleMediumQueryVariables>;
 export const TranscriptChaptersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TranscriptChapters"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"transcriptIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"transcriptChapters"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"transcriptIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"transcriptIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}}]}}]}}]} as unknown as DocumentNode<TranscriptChaptersQuery, TranscriptChaptersQueryVariables>;

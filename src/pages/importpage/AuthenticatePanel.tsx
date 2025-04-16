@@ -1,4 +1,5 @@
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { getUserSession, User } from '../integrationpage/IntegrationPage';
 import React, { useEffect, useState } from 'react';
 import { useIsUserAuthenticated } from '../../queries/userGetUserAuthenticated';
@@ -32,9 +33,14 @@ export const AuthenticatePanel: React.FC<Props> = ({ link, startUpload }) => {
   ) : authenticationBtnClicked && user ? (
     <PollingForAuthenticationDone {...{ user, setAuthenticationDone }} />
   ) : (
-    <Button variant='outlined' onClick={handleOpenAuth}>
-      Authenticate your account at bn wikibase{' '}
-    </Button>
+    <Grid container flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+      <Typography component={'strong'} gutterBottom>
+        Authorize Dashboard-Duck to access Borgnetzwerk-Wikibase functions on your behalf.
+      </Typography>
+      <Button variant='outlined' onClick={handleOpenAuth}>
+        Authorize
+      </Button>
+    </Grid>
   );
 
   return (
@@ -82,10 +88,10 @@ const PollingForAuthenticationDone: React.FC<{
 
   switch (data?.isAuthenticated.status) {
     case AuthenticationStatus.Pending:
-      return <Typography variant='h6'>Authentication Pending</Typography>;
+      return <Typography variant='h6'>Authorization Pending</Typography>;
     case AuthenticationStatus.Authenticated:
-      return <Typography variant='h6'>Authencation Complete</Typography>;
+      return <Typography variant='h6'>Authorization Complete</Typography>;
     default:
-      return <Typography variant='h6'>Not Authenticated</Typography>;
+      return <Typography variant='h6'>Not Authorized</Typography>;
   }
 };

@@ -1,10 +1,11 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import { DateField, LocalizationProvider } from '@mui/x-date-pickers';
+import { DateField, DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/de';
-import { Box } from '@mui/material';
+import { Box, TextField, TextFieldProps, TextFieldVariants } from '@mui/material';
+import { Variant } from '@mui/material/styles/createTypography';
 
 export interface DateInputProps<T> {
   locale: string;
@@ -13,6 +14,8 @@ export interface DateInputProps<T> {
   valueToDate: (v: T) => Dayjs | null;
   onChange: (otherDate: Dayjs) => void;
 }
+
+const SmallTextField: React.FC<TextFieldProps> = (params) => <TextField {...params} size='small' />;
 
 export const DateInput = <R,>({
   label,
@@ -31,8 +34,10 @@ export const DateInput = <R,>({
         sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
         {label}
         <LocalizationProvider adapterLocale={locale} dateAdapter={AdapterDayjs}>
-          <DateField
-            size='small'
+          <DatePicker
+            slots={{
+              textField: SmallTextField
+            }}
             value={valueToDate(value)}
             onChange={(otherDate) => {
               if (otherDate) {
