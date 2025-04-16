@@ -1,0 +1,8 @@
+federation_version: =2.4.7
+subgraphs:
+  media:
+    schema:
+      subgraph_url: http://localhost:8080/graphql # Schema provided via file
+  integration:
+    schema:
+      subgraph_url: http://localhost:5000/graphql # Schema provided via file

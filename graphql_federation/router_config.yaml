@@ -1,0 +1,26 @@
+cors:
+  # Set to true to allow any origin
+
+  # (Defaults to false)
+
+  allow_any_origin: true
+
+  # List of accepted origins
+
+  # (Ignored if allow_any_origin is true)
+
+  # (Defaults to the GraphOS Studio url: `https://studio.apollographql.com`)
+
+  #
+
+  # An origin is a combination of scheme, hostname and port.
+
+  # It does not have any path section, so no trailing slash.
+
+  origins:
+    - https://www.your-app.example.com
+
+    - https://studio.apollographql.com # Keep this so GraphOS Studio can run queries against your router
+
+  match_origins:
+    - "^https://([a-z0-9]+[-]?)*.ngrok-free.app$" # any host that uses https and ends with .api.example.com
